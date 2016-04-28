@@ -1,0 +1,47 @@
+<link rel="import" href="../polymer/polymer.html">
+
+<link rel="import" href="things-resource-meta-behavior.html">
+<link rel="import" href="../things-ajax/things-ajax.html">
+<!-- 
+<b>Example</b> 
+
+		<things-resource-meta 
+		  id="resourceMeta" 
+		  resource-type="Role" 
+		  sort-fields = "{{sortFields}}"
+		  select-fields="{{selectFields}}"
+		  search-form-fields ="{{searchFormFields}}"
+		  resource-form-fields ="{{resourceFormFields}}"
+		  grid-model ="{{gridModel}}"
+		  grid-columns ="{{gridColumns}}">
+		</things-resource-meta>
+
+
+		resourceMeta.loadMeta();
+
+@demo demo/index.html
+ -->
+<dom-module id="things-resource-meta">
+	<template>
+		<things-ajax 
+			id="meta-ajax"
+			resource-url="{{resourceMetaUrl}}"
+			last-response="{{metaData}}">
+		</things-ajax>
+	</template>
+
+	<script>
+		Polymer({
+			is: 'things-resource-meta',
+			
+			behaviors: [ Things.ResourceMetaBehavior ],
+
+			/**
+			 * load resource meta data
+			 */
+			loadMeta: function() {
+				this.$['meta-ajax'].generateRequest();
+			}
+		});
+	</script>
+</dom-module>
