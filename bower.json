@@ -1,6 +1,6 @@
 {
   "name": "things-meta",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "authors": [
     "Hatio Lab. <heartyoh@hatiolab.com>"
   ],
@@ -19,7 +19,7 @@
   ],
   "dependencies": {
     "polymer": "Polymer/polymer#^1.2.0",
-    "things-msg-box-behavior": "ThingsElements/things-msg-box-behavior#latest",
+    "things-msg-box-behavior": "ThingsElements/things-msg-box-behavior",
     "things-ajax": "ThingsElements/things-ajax#^0.0.13"
   },
   "devDependencies": {
@@ -27,8 +27,8 @@
     "web-component-tester": "^4.0.0",
     "iron-demo-helpers": "^1.2.3",
     "iron-autogrow-textarea": "^1.0.12",
-    "things-setting": "ThingsElements/things-setting#latest",
-    "things-spinner": "ThingsElements/things-spinner#latest",
+    "things-setting": "ThingsElements/things-setting",
+    "things-spinner": "ThingsElements/things-spinner",
     "paper-toast": "^1.2.2"
   }
 }
