@@ -1,6 +1,6 @@
 {
   "name": "things-meta",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "authors": [
     "Hatio Lab. <heartyoh@hatiolab.com>"
   ],
@@ -10,7 +10,7 @@
     "polymer",
     "seed"
   ],
-  "main": "things-meta.html",
+  "main": "elements.html",
   "license": "http://polymer.github.io/LICENSE.txt",
   "homepage": "https://github.com/ThingsElements/things-meta/",
   "ignore": [
