@@ -122,7 +122,9 @@ Things.GridMetaBehavior = {
 					field.editor = { type: 'list', domainOnly: true };
 					field.lookupDisplay = true;
 					field.lookupValues = metaData.code_list.map(function(code) { return code.name });
+					field.lookupValues.unshift('');
 					field.lookupLabels = metaData.code_list.map(function(code) { return code.description });
+					field.lookupLabels.unshift('');
 
 				} else if(metaData.editor == 'checkbox') {
 					field.editable = false;
