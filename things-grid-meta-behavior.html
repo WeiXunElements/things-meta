@@ -111,8 +111,10 @@ Things.GridMetaBehavior = {
 				validations: []
 			};
 
-			// id 필드는 width를 0으로 하고 숨긴다.
-			if(metaData.name == 'id') field.width = 0;
+			// id 필드는 기본으로 width를 0으로 하고 숨기지만 표시한다고 설정이 되어 있으면 설정한다. 어쨋든 그리드 상에는 존재해야 한다.
+			if(metaData.name == 'id') {
+				field.width = metaData.list_rank > 0 ? metaData.width : 0;
+			}
 
 			// align 정보가 있으면 설정
 			if(metaData.align) field.styles.textAlignment = metaData.align;
