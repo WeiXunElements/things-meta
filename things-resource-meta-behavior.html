@@ -18,11 +18,18 @@ Things.ResourceMetaBehaviorImpl = {
 
 	properties: {
 		/**
+		 * 메뉴 아이디. 서버에 화면을 구성할 정보 요청을 하기 위한 정보
+		 */		
+		menuId: {
+			type: String
+		},
+
+		/**
 		 * view 구성을 위해 필요한 메타 데이터를 조회하기 위한 URL
 		 */
 		resourceMetaUrl: {
 			type: String,
-			computed: '_computeResourceMetaUrl(resourceType)'
+			computed: '_computeResourceMetaUrl(menuId)'
 		},
 
 		/**
@@ -51,35 +58,35 @@ Things.ResourceMetaBehaviorImpl = {
 	},
 
 	/**
-	 * resourceType으로 resource meta url을 생성
+	 * menuId로 부터 Menu meta URL을 생성
 	 *
 	 * @param {String} resourceType
-	 * @return {String} resource meta get URL
+	 * @return {String} Get Menu Meta URL
 	 */
-	_computeResourceMetaUrl: function(resourceType) {
-		return 'entities/' + resourceType + '/resource_columns';
+	_computeResourceMetaUrl: function(menuId) {
+		return 'menus/' + menuId + '/menu_meta';
 	},
 
 	/**
 	 * meta data를 파싱한다.
 	 *
-	 * @param {Array} metaDataList
+	 * @param {Array} metaData
 	 */
-	parseMetaData: function(metaDataList) {
-		if(!metaDataList || metaDataList.length == 0) return;
+	parseMetaData: function(metaData) {
+		if(!metaData || metaData.length == 0) return;
 
 		// 1. Parse Sort Fields - search form
-		this.sortFields = this._parseSortFields(metaDataList);
+		this.sortFields = this._parseSortFields(metaData.columns);
 		// 2. Parse Select Fields - search form
-		this.selectFields = this._parseSelectFields(metaDataList);
+		this.selectFields = this._parseSelectFields(metaData.columns);
 		// 3. Parse Search Form Fields - search form
-		this.searchFormFields = this._parseSearchFormFields(metaDataList);
+		this.searchFormFields = this._parseSearchFormFields(metaData.columns);
 		// 4. Parse Resource Form Fields - detail form
-		this.resourceFormFields = this._parseResourceFormFields(metaDataList);
+		this.resourceFormFields = this._parseResourceFormFields(metaData.columns);
 		// 5. Parse Grid Models - grid form
-		this.gridModel = this._parseGridModel(metaDataList);
+		this.gridModel = this._parseGridModel(metaData.columns);
 		// 6. Parse Grid Columns - grid form
-		this.gridColumns = this._parseGridColumns(metaDataList);
+		this.gridColumns = this._parseGridColumns(metaData.columns);
 	}
 
 };

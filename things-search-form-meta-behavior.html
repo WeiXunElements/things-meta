@@ -44,7 +44,7 @@ Things.SearchFormMetaBehavior = {
 	 */
 	_parseSelectFields: function(metaDataList) {
 		var listMetaList = metaDataList.filter(function(metaData) { 
-			return (metaData.name == 'id' || (metaData.list_rank && metaData.list_rank > 0));
+			return (metaData.name == 'id' || (metaData.grid_rank && metaData.grid_rank > 0));
 		});
 
 		var selectColumns = listMetaList.map(function(metaData) { return metaData.name; });
@@ -90,12 +90,12 @@ Things.SearchFormMetaBehavior = {
 		return searchMetaList.map(function(metaData) {
 			var field = { 
 				name : metaData.name, 
-				label : metaData.term, 
-				type : metaData.editor,
-				op : metaData.operator ? metaData.operator : 'eq'
+				label : Things.DataGlobal.t(metaData.term),
+				type : metaData.form_editor,
+				op : metaData.search_oper ? metaData.search_oper : 'eq'
 			};
 				
-			if(metaData.editor) me._parseFormField(field, metaData, false)
+			if(metaData.form_editor) me._parseFormField(field, metaData, false)
 			return field;
 		});
 	},
@@ -108,43 +108,27 @@ Things.SearchFormMetaBehavior = {
 	 * @param {Boolean} resourceForm resourceForm인지 아닌지 여부 
 	 */
 	_parseFormField: function(field, metaData, resourceForm) {
-		if('code-combo' == metaData.editor) {
+		var editor = metaData.form_editor;
+
+		if('code-combo' == editor) {
 			field.codeName = metaData.ref_name;
 
-		} else if(metaData.editor.indexOf('resource-selector') >= 0) {
-			field.type = 'resource-selector';
+		} else if(editor.indexOf('resource-selector') >= 0 || editor.indexOf('resource-field') >= 0) {
 			field.userObj = {
 				delegateColumn : 'name',
 				resourceType : metaData.ref_name,
-				resourceUrl : metaData.format
+				resourceUrl : metaData.ref_url
 			};
 			
-			if(metaData.editor.indexOf('.') > 0) {
-				field.userObj.delegateColumn = metaData.editor.split('.')[1];
+			if(editor.indexOf('.') > 0) {
+				field.userObj.delegateColumn = editor.split('.')[1];
 			}
 
 			if(resourceForm) {
 				field.name = field.name.substr(0, field.name.indexOf('_id'));
 				field.type = 'resource-field';
-			}
-
-		} else if(metaData.editor.indexOf('resource-column') >= 0) {
-			field.type = 'resource-field';
-			field.userObj = {
-				delegateColumn : 'name',
-				resourceType : metaData.ref_name,
-				resourceUrl : metaData.format
-			};
-			
-			if(metaData.editor.indexOf('.') > 0) {
-				field.userObj.delegateColumn = metaData.editor.split('.')[1];
-			}
-
-			if(resourceForm) {
-				field.name = field.name.substr(0, field.name.indexOf('_id'));
-				field.userObj.readOnly = true;
-			}	else {
-				field.type = 'resource-selector'
+			} else {
+				field.type = 'resource-selector';
 			}
 		}
 	},

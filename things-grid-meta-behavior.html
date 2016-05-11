@@ -43,7 +43,7 @@ Things.GridMetaBehavior = {
 	 */
 	_parseGridModel: function(metaDataList) {
 		var gridModelMetaList = metaDataList.filter(function(metaData) { 
-			return (metaData.name == 'id' || (metaData.list_rank && metaData.list_rank > 0));
+			return (metaData.name == 'id' || (metaData.grid_rank && metaData.grid_rank > 0));
 		});
 
 		var selectColumns = '';
@@ -56,15 +56,17 @@ Things.GridMetaBehavior = {
 
 			} else if(['date', 'time'].includes(metaData.col_type)) {
 				field.dataType = 'datetime';
-				field.datetimeFormat = metaData.format? metaData.format : 'yyyy-MM-dd';
+				field.datetimeFormat = metaData.grid_format? metaData.grid_format : 'yyyy-MM-dd';
 			}
 
-			if(metaData.editor && metaData.editor.indexOf('resource-column') >= 0) {
+			var editor = metaData.grid_editor;
+
+			if(editor && editor.indexOf('resource-column') >= 0) {
 				field.fieldName = field.fieldName.substr(0, field.fieldName.indexOf('_id'));
 				field.dataType = 'object';
 			}
 
-			if(metaData.editor && metaData.editor.indexOf('resource-selector') >= 0) {
+			if(editor && editor.indexOf('resource-selector') >= 0) {
 				field.fieldName = field.fieldName.substr(0, field.fieldName.indexOf('_id'));
 				field.dataType = 'object';
 			}
@@ -92,35 +94,34 @@ Things.GridMetaBehavior = {
 	 */
 	_parseGridColumns: function(metaDataList) {
 		var gridColumnMetaList = metaDataList.filter(function(metaData) { 
-			return (metaData.name == 'id' || (metaData.list_rank && metaData.list_rank > 0));
+			return (metaData.name == 'id' || (metaData.grid_rank && metaData.grid_rank > 0));
 		});
 
-		this._sortMetaData(gridColumnMetaList, 'list_rank');
-
-		var me = this;
+		this._sortMetaData(gridColumnMetaList, 'grid_rank');
 		// resource selector 컬럼 
-		var resourceSelectorColumns = [];
+		var me = this, resourceSelectorColumns = [];
 
 		var gColumns = gridColumnMetaList.map(function(metaData) {
 			var field = { 
 				name: metaData.name, 
 				fieldName: metaData.name, 
-				width: metaData.width ? metaData.width : 100,
-				header: { text: metaData.term },
+				width: metaData.grid_width ? metaData.grid_width : 100,
+				header: { text: Things.DataGlobal.t(metaData.term) },
 				styles: {},
 				validations: []
 			};
 
-			// id 필드는 기본으로 width를 0으로 하고 숨기지만 표시한다고 설정이 되어 있으면 설정한다. 어쨋든 그리드 상에는 존재해야 한다.
+			// id 필드는 기본으로 grid_width를 0으로 하고 숨기지만 표시한다고 설정이 되어 있으면 설정한다. 어쨋든 그리드 상에는 존재해야 한다.
 			if(metaData.name == 'id') {
-				field.width = metaData.list_rank > 0 ? metaData.width : 0;
+				field.width = metaData.grid_rank > 0 ? metaData.grid_width : 0;
 			}
 
 			// align 정보가 있으면 설정
-			if(metaData.align) field.styles.textAlignment = metaData.align;
+			if(metaData.grid_align) field.styles.textAlignment = metaData.grid_align;
 
-			if(metaData.editor) {
-				if(('code-combo' == metaData.editor) && metaData.code_list && metaData.code_list.length > 0) {
+			var editor = metaData.grid_editor;
+			if(editor) {
+				if(('code-combo' == editor) && metaData.code_list && metaData.code_list.length > 0) {
 					field.editor = { type: 'list', domainOnly: true };
 					field.lookupDisplay = true;
 					field.lookupValues = metaData.code_list.map(function(code) { return code.name });
@@ -128,42 +129,54 @@ Things.GridMetaBehavior = {
 					field.lookupLabels = metaData.code_list.map(function(code) { return code.description });
 					field.lookupLabels.unshift('');
 
-				} else if(metaData.editor == 'checkbox') {
+				} else if(editor == 'checkbox') {
 					field.editable = false;
 					field.renderer = { type: 'check', editable: true, threeStates: false, trueValues: 'true', falseValues: 'false' };
 
-				} else if(metaData.editor == 'number') {
+				} else if(editor == 'number') {
 					field.editor = { type: 'number' };
-					field.styles.numberFormat = metaData.format ? metaData.format : '0,000';
+					field.styles.numberFormat = metaData.grid_format ? metaData.grid_format : '0,000';
 
-				} else if(metaData.editor == 'date' || metaData.editor == 'time') {
+				} else if(editor == 'date' || editor == 'time') {
 					field.editor = { type: 'date' };
-					field.styles.datetimeFormat = metaData.format ? metaData.format : 'yyyy-MM-dd';
+					field.styles.datetimeFormat = metaData.grid_format ? metaData.grid_format : 'yyyy-MM-dd';
 					field.styles.textAlignment = 'center';
 
-				} else if(metaData.editor.indexOf('resource-column') >= 0) {
+				} else if(editor.indexOf('resource-column') >= 0) {
 					me._newResourceColumn(metaData, field);
 
-				} else if(metaData.editor.indexOf('resource-selector') >= 0) {
+				} else if(editor.indexOf('resource-selector') >= 0) {
 					var delegateColumn = me._newResourceColumn(metaData, field);
 					me._setResourceEditorColumn(metaData, field, resourceSelectorColumns, delegateColumn);
 
-				} else if(metaData.editor == 'download-link') {
+				} else if(editor == 'download-link') {
 					field.renderer = {
 						type: 'link',
 						requiredFields: 'id',
 						showUrl: true,
-						url: (metaData.format ? metaData.format : '') + "/${id}"
+						url: (metaData.grid_format ? metaData.grid_format : '') + "/${id}"
 					}
 				}
 			}
 
 			if(metaData.name != 'id' && !metaData.nullable) {
-				field.validations.push({expression : 'value is not empty', level: 'error', message: '(' + metaData.name + ') should not be empty!'});
+				field.validations.push({
+					level: 'error', 
+					expression : 'value is not empty',
+					message: Things.DataGlobal.t('error.SHOULD_NOT_BE_EMPTY', { 
+						value : Things.DataGlobal.t(metaData.term) 
+					})
+				});
 			}
 
 			if(metaData.col_size && metaData.col_size > 0 && metaData.col_type == 'string') {
-				field.validations.push({expression : 'len value < ' + metaData.col_size, level: 'error', message: 'Maximum (' + metaData.name + ') length is (' + metaData.col_size + ')'});
+				field.validations.push({
+					level: 'error', 
+					expression : 'len value < ' + metaData.col_size, 
+					message: Things.DataGlobal.t('error.MAX_LENGTH_OF_X_IS_Y', { 
+						name : Things.DataGlobal.t(metaData.term), value : metaData.col_size
+					})
+				});
 			}
 
 			return field;
@@ -191,15 +204,15 @@ Things.GridMetaBehavior = {
 	 */
 	_newResourceColumn: function(metaData, field) {
 		var delegateColumn = 'name';
-		if(metaData.editor.indexOf('.') >= 0) {
-			delegateColumn = metaData.editor.substr(metaData.editor.indexOf('.') + 1);
+		if(metaData.grid_editor.indexOf('.') >= 0) {
+			delegateColumn = metaData.grid_editor.substr(metaData.grid_editor.indexOf('.') + 1);
 		}
 
 		field.name = field.name.substr(0, field.name.indexOf('_id'));
-		field.fieldName = field.name;
-		field.header.text = metaData.term.indexOf() > 0 ? Things.DataGlobal.t('label.' + field.name) : metaData.term;
 		field.valueType = 'text';
-		field.type = 'calced';
+		field.type = 'calced';		
+		field.fieldName = field.name;
+		field.header.text = Things.DataGlobal.t('label.' + field.name);
 
 		field.valueCallback = function(column, row) {
 			var obj = row.getValue(column._name);
@@ -234,7 +247,7 @@ Things.GridMetaBehavior = {
 			},
 			userObj: {
 				resourceType: metaData.ref_name,
-				resourceUrl: metaData.format,
+				resourceUrl: metaData.ref_url,
 				valueField: field.name,
 				delegateColumn: delegateColumn
 			}
