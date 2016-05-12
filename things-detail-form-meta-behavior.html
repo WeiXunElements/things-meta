@@ -35,7 +35,9 @@ Things.DetailFormMetaBehavior = {
 				label : Things.DataGlobal.t(metaData.term),
 				type : metaData.form_editor 
 			};
-			if(metaData.form_editor) me._parseFormField(field, metaData, true);
+
+			if(!metaData.form_editor) metaData.form_editor = 'text';
+			me._parseFormField(field, metaData, true);
 			return field;
 		});		
 	},
@@ -70,6 +72,29 @@ Things.DetailFormMetaBehavior = {
 			} else {
 				field.type = 'resource-selector';
 			}
+		} else if('text' == editor) {
+			if (metaData.nullable === false) {
+				if(!field.userObj) {
+					field.userObj = {};
+				}
+				field.userObj.required = true;
+			}
+			if (metaData.size && metaData.size > 0) {
+				if(!field.userObj) {
+					field.userObj = {};
+				}
+				field.userObj.max = metaData.size;
+			}
+			if (metaData.col_type) {
+				if(!field.userObj) {
+					field.userObj = {};
+				}
+				field.userObj.type = metaData.col_type;
+			}
+		} else if('hidden' == editor) {
+			field.userObj = { hidden: true };
+		} else if('readonly' == editor) {
+			field.userObj = { readonly: true };
 		}
 	}
 
