@@ -43,7 +43,8 @@ Things.GridMetaBehavior = {
 	 */
 	_parseGridModel: function(metaDataList) {
 		var gridModelMetaList = metaDataList.filter(function(metaData) { 
-			return (metaData.name == 'id' || (metaData.grid_rank && metaData.grid_rank > 0));
+			if(metaData.name == 'id' && !metaData.grid_rank) metaData.grid_rank = -10;
+			return metaData.grid_rank && metaData.grid_rank != 0;
 		});
 
 		var selectColumns = '';
@@ -94,7 +95,7 @@ Things.GridMetaBehavior = {
 	 */
 	_parseGridColumns: function(metaDataList) {
 		var gridColumnMetaList = metaDataList.filter(function(metaData) { 
-			return (metaData.name == 'id' || (metaData.grid_rank && metaData.grid_rank > 0));
+			return metaData.grid_rank && metaData.grid_rank != 0;
 		});
 
 		this._sortMetaData(gridColumnMetaList, 'grid_rank');
@@ -210,9 +211,8 @@ Things.GridMetaBehavior = {
 
 		field.name = field.name.substr(0, field.name.indexOf('_id'));
 		field.valueType = 'text';
-		field.type = 'calced';		
+		field.type = 'calced';
 		field.fieldName = field.name;
-		field.header.text = Things.DataGlobal.t('label.' + field.name);
 
 		field.valueCallback = function(column, row) {
 			var obj = row.getValue(column._name);
