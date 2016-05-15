@@ -1,0 +1,28 @@
+<link rel="import" href="../polymer/polymer.html">
+
+<link rel="import" href="things-menu-meta-behavior.html">
+<link rel="import" href="../things-ajax/things-ajax.html">
+
+<!-- 
+ 	메뉴 정보를 받아서 메뉴 메타데이터를 조회하기 위한 resource 
+-->
+
+<dom-module id="things-menu-meta">
+	<template>
+		<things-ajax 
+			auto
+			id="menu-meta-ajax"
+			resource-url="{{menuMetaUrl}}"
+			last-response="{{metaData}}">
+		</things-ajax>
+	</template>
+
+	<script>
+		Polymer({
+			is: 'things-menu-meta',
+			
+			behaviors: [ Things.MenuMetaBehavior ]
+
+		});
+	</script>
+</dom-module>
