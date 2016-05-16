@@ -18,14 +18,6 @@ Things.MenuMetaBehaviorImpl = {
 
 	properties: {
 		/**
-		 * 메뉴 정보
-		 */
-		menuInfo: {
-			type: Object,
-			observer: '_menuInfoChanged'
-		},
-
-		/**
 		 * 메뉴 ID
 		 */
 		menuId: {
@@ -41,22 +33,11 @@ Things.MenuMetaBehaviorImpl = {
 		},		
 
 		/**
-		 * Menu meta data - searchFromFields, resourceFormFields, gridModel, gridColumns, selectFields, sortFields를 파싱한다. 
+		 * Menu meta data - searchFromFields, resourceFormFields, gridModel, gridColumns, selectFields, sortFields, buttons 등을 파싱한다. 
 		 */
 		metaData: {
 			type: Array,
 			observer: 'parseMetaData'
-		}		
-	},
-
-	/**
-	 * 메뉴 메타데이터 변경시
-   *
-	 * @param {Object} menuInfo
-	 */
-	_menuInfoChanged: function(menuInfo) {
-		if(menuInfo) {
-			this.menuId = menuInfo.id;
 		}
 	},
 
@@ -78,17 +59,19 @@ Things.MenuMetaBehaviorImpl = {
 	parseMetaData: function(metaData) {
 		if(!metaData || metaData.length == 0) return;
 
-		// 1. Parse Sort Fields - search form
+		// 1. Buttons
+		this.buttons = this._parseButtons(metaData.buttons);
+		// 2. Parse Sort Fields - search form
 		this.sortFields = this._parseSortFields(metaData.columns);
-		// 2. Parse Select Fields - search form
+		// 3. Parse Select Fields - search form
 		this.selectFields = this._parseSelectFields(metaData.columns);
-		// 3. Parse Search Form Fields - search form
+		// 4. Parse Search Form Fields - search form
 		this.searchFormFields = this._parseSearchFormFields(metaData.columns);
-		// 4. Parse Resource Form Fields - detail form
+		// 5. Parse Resource Form Fields - detail form
 		this.resourceFormFields = this._parseResourceFormFields(metaData.columns);
-		// 5. Parse Grid Models - grid form
+		// 6. Parse Grid Models - grid form
 		this.gridModel = this._parseGridModel(metaData.columns);
-		// 6. Parse Grid Columns - grid form
+		// 7. Parse Grid Columns - grid form
 		this.gridColumns = this._parseGridColumns(metaData.columns);
 	}	
 

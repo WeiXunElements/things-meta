@@ -32,8 +32,29 @@ Things.GridMetaBehavior = {
 		 */
 		gridColumns: {
 			type: Array
+		},
+
+		/**
+		 * Buttons
+		 */
+		buttons: {
+			type: Array
 		}
 	},
+
+	/**
+	 * meta data로 부터 buttons를 파싱한다.
+	 *
+	 * @param {Array} buttonList
+	 * @return {Array} buttonList
+	 */
+	_parseButtons: function(buttonList) {
+		if(buttonList) { 
+			buttonList.forEach(function(button) { button.id = button.text + '-btn'; }); 
+		}
+		
+		return buttonList;
+	},	
 
 	/**
 	 * meta data로 부터 gridModel로 파싱한다.
