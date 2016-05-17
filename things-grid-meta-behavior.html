@@ -159,7 +159,7 @@ Things.GridMetaBehavior = {
 					field.editor = { type: 'number' };
 					field.styles.numberFormat = metaData.grid_format ? metaData.grid_format : '0,000';
 
-				} else if(editor == 'date' || editor == 'time') {
+				} else if(editor == 'date-picker' || editor == 'time-picker') {
 					field.editor = { type: 'date' };
 					field.styles.datetimeFormat = metaData.grid_format ? metaData.grid_format : 'yyyy-MM-dd';
 					field.styles.textAlignment = 'center';
