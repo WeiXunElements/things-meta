@@ -1,0 +1,96 @@
+<link rel="import" href="../polymer/polymer.html">
+
+<link rel="import" href="things-search-form-meta-behavior.html">
+<link rel="import" href="things-detail-form-meta-behavior.html">
+<link rel="import" href="things-grid-meta-behavior.html">
+
+<script>
+
+window.Things = window.Things || {};
+
+/**
+ * 구성하고자 하는 메뉴 화면 구성을 위해 메뉴명으로 메타 데이터를 조회하여 모델 정보를 제공하는 Behavior
+ * 화면의 메타 데이터를 조회하는 URL 구성과 메타 데이터를 받은 후 검색 폼, 그리드, 디테일 폼에 필요한 모델 정보를 제공한다.
+ *
+ * @polymerBehavior Things.NamedMetaBehavior
+ */
+Things.NamedMetaBehaviorImpl = {
+
+	properties: {
+		/**
+		 * 메뉴명
+		 */
+		menuName: {
+			type: String
+		},
+
+		/**
+		 * 화면 구성을 위해 필요한 메뉴 메타 데이터를 조회하기 위한 URL
+		 */
+		menuMetaUrl: {
+			type: String,
+			computed: '_computeMenuMetaUrl(menuName)'
+		},		
+
+		/**
+		 * Menu meta data - searchFromFields, resourceFormFields, gridModel, gridColumns, selectFields, sortFields, buttons 등을 파싱한다. 
+		 */
+		metaData: {
+			type: Array,
+			observer: 'parseMetaData'
+		},
+
+		/**
+		 * Menu 정보 
+		 */
+		menuInfo: {
+			type: Object
+		}
+	},
+
+	/**
+	 * menuName으로 부터 Menu Meta URL을 생성
+	 *
+	 * @param {String} menuName
+	 * @return {String} Get Menu Meta URL
+	 */
+	_computeMenuMetaUrl: function(menuName) {
+		return 'menus/' + menuName + '/named_meta';
+	},
+
+	/**
+	 * meta data를 파싱한다.
+	 *
+	 * @param {Array} metaData
+	 */
+	parseMetaData: function(metaData) {
+		if(!metaData || metaData.length == 0) return;
+
+		// 0. Menu Information
+		this.menuInfo = metaData.menu;
+		// 1. Buttons
+		this.buttons = this._parseButtons(metaData.buttons);
+		// 2. Parse Sort Fields - search form
+		this.sortFields = this._parseSortFields(metaData.columns);
+		// 3. Parse Select Fields - search form
+		this.selectFields = this._parseSelectFields(metaData.columns);
+		// 4. Parse Search Form Fields - search form
+		this.searchFormFields = this._parseSearchFormFields(metaData.columns);
+		// 5. Parse Resource Form Fields - detail form
+		this.resourceFormFields = this._parseResourceFormFields(metaData.columns);
+		// 6. Parse Grid Models - grid form
+		this.gridModel = this._parseGridModel(metaData.columns);
+		// 7. Parse Grid Columns - grid form
+		this.gridColumns = this._parseGridColumns(metaData.columns);
+	}	
+
+};
+
+Things.NamedMetaBehavior = [
+	Things.NamedMetaBehaviorImpl,
+	Things.SearchFormMetaBehavior,
+	Things.DetailFormMetaBehavior,
+	Things.GridMetaBehavior
+];
+
+</script>
