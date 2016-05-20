@@ -84,25 +84,16 @@ Things.DetailFormMetaBehavior = {
 			} else {
 				field.type = 'resource-selector';
 			}
+			
 		} else if('text' == editor) {
-			if (metaData.nullable === false) {
-				if(!field.userObj) {
-					field.userObj = {};
-				}
-				field.userObj.required = true;
+			if(!field.userObj) field.userObj = {};
+			if(!metaData.nullable) field.userObj.required = true;
+			if(metaData.size && metaData.size > 0) field.userObj.max = metaData.size;
+			if(metaData.col_type) field.userObj.type = metaData.col_type;
+			if(metaData.form_validator) {
+				field.userObj.validator = metaData.form_validator.replace('things.', 'things-validator-'); 
 			}
-			if (metaData.size && metaData.size > 0) {
-				if(!field.userObj) {
-					field.userObj = {};
-				}
-				field.userObj.max = metaData.size;
-			}
-			if (metaData.col_type) {
-				if(!field.userObj) {
-					field.userObj = {};
-				}
-				field.userObj.type = metaData.col_type;
-			}
+
 		} else if('hidden' == editor) {
 			field.userObj = { hidden: true };
 			
