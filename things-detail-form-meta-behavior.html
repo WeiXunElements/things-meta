@@ -69,6 +69,7 @@ Things.DetailFormMetaBehavior = {
 		} else if(editor.indexOf('resource-selector') >= 0 || editor.indexOf('resource-field') >= 0) {
 			field.userObj = {
 				delegateColumn : 'name',
+				selectorType : metaData.ref_type,
 				resourceType : metaData.ref_name,
 				resourceUrl : metaData.ref_url,
 				submitName : field.name

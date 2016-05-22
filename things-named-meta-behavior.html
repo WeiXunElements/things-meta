@@ -25,6 +25,13 @@ Things.NamedMetaBehaviorImpl = {
 		},
 
 		/**
+		 * 화면 대표 URL
+		 */
+		resourceUrl: {
+			type: String
+		},
+
+		/**
 		 * 화면 구성을 위해 필요한 메뉴 메타 데이터를 조회하기 위한 URL
 		 */
 		menuMetaUrl: {
@@ -68,6 +75,8 @@ Things.NamedMetaBehaviorImpl = {
 
 		// 0. Menu Information
 		this.menuInfo = metaData.menu;
+		this.resourceUrl = this.menuInfo.resource_url;
+
 		// 1. Buttons
 		this.buttons = this._parseButtons(metaData.buttons);
 		// 2. Parse Sort Fields - search form

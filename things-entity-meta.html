@@ -1,11 +1,12 @@
 <link rel="import" href="../polymer/polymer.html">
 
-<link rel="import" href="things-resource-meta-behavior.html">
 <link rel="import" href="../things-ajax/things-ajax.html">
+<link rel="import" href="things-entity-meta-behavior.html">
+
 <!-- 
 <b>Example</b> 
 
-		<things-resource-meta 
+		<things-entity-meta 
 		  id="resourceMeta" 
 		  resource-type="Role" 
 		  sort-fields = "{{sortFields}}"
@@ -14,14 +15,14 @@
 		  resource-form-fields ="{{resourceFormFields}}"
 		  grid-model ="{{gridModel}}"
 		  grid-columns ="{{gridColumns}}">
-		</things-resource-meta>
+		</things-entity-meta>
 
 
 		resourceMeta.loadMeta();
 
 @demo demo/index.html
  -->
-<dom-module id="things-resource-meta">
+<dom-module id="things-entity-meta">
 	<template>
 		<things-ajax 
 			id="meta-ajax"
@@ -32,9 +33,9 @@
 
 	<script>
 		Polymer({
-			is: 'things-resource-meta',
+			is: 'things-entity-meta',
 			
-			behaviors: [ Things.ResourceMetaBehavior ],
+			behaviors: [ Things.EntityMetaBehavior ],
 
 			/**
 			 * load resource meta data
