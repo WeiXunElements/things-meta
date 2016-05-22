@@ -21,7 +21,7 @@ Things.EntityMetaBehaviorImpl = {
 		 * Entity 명
 		 * ex) User resource라고 하면 User
 		 */
-		resourceType: {
+		entityName: {
 			type: String
 		},
 
@@ -37,7 +37,7 @@ Things.EntityMetaBehaviorImpl = {
 		 */
 		entityMetaUrl: {
 			type: String,
-			computed: '_computeEntityMetaUrl(resourceType)'
+			computed: '_computeEntityMetaUrl(entityName)'
 		},
 
 		/**
@@ -58,13 +58,13 @@ Things.EntityMetaBehaviorImpl = {
 	},
 
 	/**
-	 * resourceType으로 부터 화면 구성 메타 데이터 조회를 위한 메타 URL을 생성
+	 * entityName으로 부터 화면 구성 메타 데이터 조회를 위한 메타 URL을 생성
 	 *
-	 * @param {String} resourceType
+	 * @param {String} entityName
 	 * @return {String} 화면 구성 메타 데이터 조회 URL
 	 */
-	_computeEntityMetaUrl: function(resourceType) {
-		return 'entities/' + resourceType + '/meta';
+	_computeEntityMetaUrl: function(entityName) {
+		return 'entities/' + entityName + '/meta';
 	},
 
 	/**
@@ -78,7 +78,7 @@ Things.EntityMetaBehaviorImpl = {
 		var entityColumns = metaData.items ? metaData.items : [];
 		delete metaData['columns'];
 		this.entity = metaData;
-		this.resourceUrl = entity.search_url;
+		this.resourceUrl = this.entity.search_url;
 
 		// 1. Parse Sort Fields - search form
 		this.sortFields = this._parseSortFields(entityColumns);
