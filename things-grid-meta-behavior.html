@@ -128,7 +128,7 @@ Things.GridMetaBehavior = {
 				name: metaData.name, 
 				fieldName: metaData.name, 
 				width: metaData.grid_width ? metaData.grid_width : 100,
-				header: { text: Things.DataGlobal.t(metaData.term) },
+				header: { text: Things.DataGlobal.tt(metaData.term) },
 				styles: {},
 				validations: []
 			};
@@ -186,7 +186,7 @@ Things.GridMetaBehavior = {
 					level: 'error', 
 					expression : 'value is not empty',
 					message: Things.DataGlobal.t('error.SHOULD_NOT_BE_EMPTY', { 
-						value : Things.DataGlobal.t(metaData.term) 
+						value : Things.DataGlobal.tt(metaData.term) 
 					})
 				});
 			}
@@ -196,7 +196,7 @@ Things.GridMetaBehavior = {
 					level: 'error', 
 					expression : 'len value < ' + metaData.col_size, 
 					message: Things.DataGlobal.t('error.MAX_LENGTH_OF_X_IS_Y', { 
-						name : Things.DataGlobal.t(metaData.term), value : metaData.col_size
+						name : Things.DataGlobal.tt(metaData.term), value : metaData.col_size
 					})
 				});
 			}
