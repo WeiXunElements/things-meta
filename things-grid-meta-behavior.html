@@ -168,8 +168,8 @@ Things.GridMetaBehavior = {
 					me._newResourceColumn(metaData, field);
 
 				} else if(editor.indexOf('resource-selector') >= 0) {
-					var delegateColumn = me._newResourceColumn(metaData, field);
-					me._setResourceEditorColumn(metaData, field, resourceSelectorColumns, delegateColumn);
+					me._newResourceColumn(metaData, field);
+					me._setResourceEditorColumn(metaData, field, resourceSelectorColumns);
 
 				} else if(editor == 'download-link') {
 					field.renderer = {
@@ -225,11 +225,7 @@ Things.GridMetaBehavior = {
 	 * @param {String} delegateColumn
 	 */
 	_newResourceColumn: function(metaData, field) {
-		var delegateColumn = 'name';
-		if(metaData.grid_editor.indexOf('.') >= 0) {
-			delegateColumn = metaData.grid_editor.substr(metaData.grid_editor.indexOf('.') + 1);
-		}
-
+		var delegateColumn = metaData.grid_format ? metaData.grid_format : 'name';
 		field.name = field.name.substr(0, field.name.indexOf('_id'));
 		field.valueType = 'text';
 		field.type = 'calced';
@@ -239,8 +235,6 @@ Things.GridMetaBehavior = {
 			var obj = row.getValue(column._name);
 			return obj ? obj[delegateColumn] : '';
 		};
-
-		return delegateColumn;
 	},
 
 	/**
@@ -249,9 +243,8 @@ Things.GridMetaBehavior = {
 	 * @param {Object} metaData
 	 * @param {Object} field
 	 * @param {Array} resourceSelectorColumns
-	 * @param {String} delegateColumn
 	 */
-	_setResourceEditorColumn: function(metaData, field, resourceSelectorColumns, delegateColumn) {
+	_setResourceEditorColumn: function(metaData, field, resourceSelectorColumns) {
 		var editorField = {
 			name: metaData.name, 
 			fieldName: metaData.name, 
@@ -267,11 +260,10 @@ Things.GridMetaBehavior = {
 				iconLocation: 'center'
 			},
 			userObj: {
-				selectorType: metaData.ref_type,
-				resourceType: metaData.ref_name,
-				resourceUrl: metaData.ref_url,
-				valueField: field.name,
-				delegateColumn: delegateColumn
+				resourceType: metaData.ref_type,
+				resourceName: metaData.ref_name,
+				initialParams : metaData.ref_params,
+				ownerField: field.name
 			}
 		};
 

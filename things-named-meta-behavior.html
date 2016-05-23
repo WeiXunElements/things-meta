@@ -20,7 +20,7 @@ Things.NamedMetaBehaviorImpl = {
 		/**
 		 * 메뉴명
 		 */
-		menuName: {
+		resourceName: {
 			type: String
 		},
 
@@ -36,7 +36,7 @@ Things.NamedMetaBehaviorImpl = {
 		 */
 		menuMetaUrl: {
 			type: String,
-			computed: '_computeMenuMetaUrl(menuName)'
+			computed: '_computeMenuMetaUrl(resourceName)'
 		},		
 
 		/**
@@ -56,13 +56,13 @@ Things.NamedMetaBehaviorImpl = {
 	},
 
 	/**
-	 * menuName으로 부터 Menu Meta URL을 생성
+	 * resourceName으로 부터 Menu Meta URL을 생성
 	 *
-	 * @param {String} menuName
+	 * @param {String} resourceName
 	 * @return {String} Get Menu Meta URL
 	 */
-	_computeMenuMetaUrl: function(menuName) {
-		return 'menus/' + menuName + '/named_meta';
+	_computeMenuMetaUrl: function(resourceName) {
+		return 'menus/' + resourceName + '/named_meta';
 	},
 
 	/**

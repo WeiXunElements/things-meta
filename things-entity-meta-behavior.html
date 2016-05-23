@@ -21,7 +21,7 @@ Things.EntityMetaBehaviorImpl = {
 		 * Entity 명
 		 * ex) User resource라고 하면 User
 		 */
-		entityName: {
+		resourceName: {
 			type: String
 		},
 
@@ -37,7 +37,7 @@ Things.EntityMetaBehaviorImpl = {
 		 */
 		entityMetaUrl: {
 			type: String,
-			computed: '_computeEntityMetaUrl(entityName)'
+			computed: '_computeEntityMetaUrl(resourceName)'
 		},
 
 		/**
@@ -58,13 +58,13 @@ Things.EntityMetaBehaviorImpl = {
 	},
 
 	/**
-	 * entityName으로 부터 화면 구성 메타 데이터 조회를 위한 메타 URL을 생성
+	 * resourceName으로 부터 화면 구성 메타 데이터 조회를 위한 메타 URL을 생성
 	 *
-	 * @param {String} entityName
+	 * @param {String} resourceName
 	 * @return {String} 화면 구성 메타 데이터 조회 URL
 	 */
-	_computeEntityMetaUrl: function(entityName) {
-		return 'entities/' + entityName + '/meta';
+	_computeEntityMetaUrl: function(resourceName) {
+		return 'entities/' + resourceName + '/meta';
 	},
 
 	/**
