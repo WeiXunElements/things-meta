@@ -94,8 +94,9 @@ Things.SearchFormMetaBehavior = {
 				type : metaData.search_editor,
 				op : metaData.search_oper ? metaData.search_oper : 'eq'
 			};
-				
-			if(metaData.search_editor) me._parseFormField(field, metaData, false)
+			
+			if(!metaData.search_editor) metaData.search_editor = 'text';
+			if(metaData.search_editor) me._parseSearchFormField(field, metaData, false)
 			return field;
 		});
 	},
@@ -107,7 +108,7 @@ Things.SearchFormMetaBehavior = {
 	 * @param {Object} metaData
 	 * @param {Boolean} resourceForm resourceForm인지 아닌지 여부 
 	 */
-	_parseFormField: function(field, metaData, resourceForm) {
+	_parseSearchFormField: function(field, metaData, resourceForm) {
 		var editor = metaData.search_editor;
 
 		if('code-combo' == editor) {

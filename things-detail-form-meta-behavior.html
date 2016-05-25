@@ -48,7 +48,7 @@ Things.DetailFormMetaBehavior = {
 
 			if(metaData.ignore_on_save) me.ignoreFieldsOnSave.push(metaData.name);
 			if(!metaData.form_editor) metaData.form_editor = 'text';
-			me._parseFormField(field, metaData, true);
+			me._parseResourceFormField(field, metaData, true);
 			return field;
 		});		
 	},
@@ -60,9 +60,7 @@ Things.DetailFormMetaBehavior = {
 	 * @param {Object} metaData
 	 * @param {Boolean} resourceForm resourceForm인지 아닌지 여부 
 	 */
-	_parseFormField: function(field, metaData, resourceForm) {
-		if(!metaData.form_editor) metaData.form_editor = 'text';
-
+	_parseResourceFormField: function(field, metaData, resourceForm) {
 		var editor = metaData.form_editor;
 
 		if('code-combo' == editor) {
