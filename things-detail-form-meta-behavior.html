@@ -61,6 +61,8 @@ Things.DetailFormMetaBehavior = {
 	 * @param {Boolean} resourceForm resourceForm인지 아닌지 여부 
 	 */
 	_parseFormField: function(field, metaData, resourceForm) {
+		if(!metaData.form_editor) metaData.form_editor = 'text';
+
 		var editor = metaData.form_editor;
 
 		if('code-combo' == editor) {
