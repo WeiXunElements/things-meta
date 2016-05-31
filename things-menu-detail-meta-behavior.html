@@ -1,0 +1,147 @@
+<link rel="import" href="../polymer/polymer.html">
+
+<link rel="import" href="things-detail-form-meta-behavior.html">
+<link rel="import" href="things-grid-meta-behavior.html">
+
+<script>
+
+window.Things = window.Things || {};
+
+/**
+ * 구성하고자 하는 메뉴 화면의 디테일 구성을 위해 메타 데이터를 조회하여 모델 정보를 제공하는 Behavior
+ * 화면의 디테일 메타 데이터를 조회하는 URL 구성과 메타 데이터를 받은 후 그리드 및 폼 구성에 필요한 모델 정보로 파싱하여 제공한다.
+ *
+ * @polymerBehavior Things.MenuDetailMetaBehavior
+ */
+Things.MenuDetailMetaBehaviorImpl = {
+
+	properties: {
+		/**
+		 * 메뉴 ID
+		 */
+		menuId: {
+			type: String
+		},
+
+		/**
+		 * 화면 구성을 위해 필요한 메뉴 메타 데이터를 조회하기 위한 URL
+		 */
+		menuDetailMetaUrl: {
+			type: String,
+			computed: '_computeMenuDetailMetaUrl(menuId)'
+		},		
+
+		/**
+		 * Menu Detail Meta Data - formFields, gridModel, gridColumns, selectFields, sortFields, buttons 등을 파싱한다. 
+		 */
+		metaData: {
+			type: Array,
+			observer: 'parseMetaData'
+		},
+
+		/**
+		 * Detail Form에 대한 키 - FormFields 정보
+		 * detail-id : FormFields 쌍
+		 */
+		formMetas: {
+			type: Object
+		},
+
+		/**
+		 * Detail Form에 대한 키 - FormIgnoreFields 정보 쌍 
+		 * 저장 시점에 서버에 전달되지 않기를 원하는 필드 리스트
+		 */
+		formIgnoreMetas: {
+			type: Object
+		},
+
+		/**
+		 * Detail Grid에 대한 키 - Grid Config 정보
+		 */
+		gridConfigMetas: {
+			type: Object
+		},
+
+		/**
+		 * Detail Grid에 대한 키 - Grid Model 정보 
+		 */
+		gridModelMetas: {
+			type: Object
+		},
+
+		/**
+		 * Detail Grid에 대한 키 - Grid Column 정보 
+		 */
+		gridColumnMetas: {
+			type: Object
+		},
+
+		/**
+		 * Detail 화면에 대한 키 - Button 정보 
+		 */
+		buttonMetas: {
+			type: Object
+		}		
+	},
+
+	/**
+	 * menuId로 부터 Menu Detail Meta URL을 생성
+	 *
+	 * @param {String} menuId
+	 * @return {String} Menu Meta Meta URL
+	 */
+	_computeMenuDetailMetaUrl: function(menuId) {
+		return 'menu_details/' + menuId + '/meta';
+	},
+
+	/**
+	 * Meta Data를 파싱한다.
+	 *
+	 * @param {Array} metaDataList
+	 */
+	parseMetaData: function(metaDataList) {
+		if(!metaDataList || metaDataList.length == 0) return;
+		this.formMetas = {}; this.formIgnoreMetas = {}; this.gridConfigMetas = {}; this.gridModelMetas = {}; this.gridColumnMetas = {}; this.buttonMetas = {};
+
+		for(var i = 0 ; i < metaDataList.length ; i++) {
+			var metaData = metaDataList[i];
+
+			if(metaData.menu_detail_buttons) {
+				// 1. Buttons
+				var buttons = this._parseButtons(metaData.menu_detail_buttons);
+				if(buttons && buttons.length > 0) {
+					buttons.forEach(function(button) { button.id = button.name + '-btn'; });
+				}
+				
+				this.buttonMetas[metaData.view_section] = buttons;
+			}
+
+			if(metaData.menu_detail_columns) {
+				if(metaData.association == 'one-to-one') {
+					// 2. Parse Form Fields - Detail Form
+					var formFields = this._parseResourceFormFields(metaData.menu_detail_columns);
+					this.formMetas[metaData.view_section] = formFields;
+
+				} else {
+					// 3. Parse Grid Models - Grid
+					var gridModel = this._parseGridModel(metaData.menu_detail_columns);
+					this.gridModelMetas[metaData.view_section] = gridModel;
+					// 4. Parse Grid Columns - Grid
+					var gridColumns = this._parseGridColumns(metaData.menu_detail_columns);
+					this.gridColumnMetas[metaData.view_section] = gridColumns;
+				}
+			}
+		}
+
+		this.fire('detail-meta-data-configured');
+	}	
+
+};
+
+Things.MenuDetailMetaBehavior = [
+	Things.MenuDetailMetaBehaviorImpl,
+	Things.DetailFormMetaBehavior,
+	Things.GridMetaBehavior
+];
+
+</script>
