@@ -178,6 +178,12 @@ Things.GridMetaBehavior = {
 						showUrl: true,
 						url: (metaData.grid_format ? metaData.grid_format : '') + "/${id}"
 					}
+					
+				} else if(editor == 'hidden') {
+					field.width = 0;
+
+				} else if(editor == 'readonly') {
+					field.editable = false;
 				}
 			}
 
@@ -222,10 +228,10 @@ Things.GridMetaBehavior = {
 	 *
 	 * @param {Object} metaData
 	 * @param {Object} field
-	 * @param {String} delegateColumn
+	 * @param {String} titleField
 	 */
 	_newResourceColumn: function(metaData, field) {
-		var delegateColumn = metaData.grid_format ? metaData.grid_format : 'name';
+		var titleField = metaData.grid_format ? metaData.grid_format : 'name';
 		field.name = field.name.substr(0, field.name.indexOf('_id'));
 		field.valueType = 'text';
 		field.type = 'calced';
@@ -233,7 +239,7 @@ Things.GridMetaBehavior = {
 
 		field.valueCallback = function(column, row) {
 			var obj = row.getValue(column._name);
-			return obj ? obj[delegateColumn] : '';
+			return obj ? obj[titleField] : '';
 		};
 	},
 
