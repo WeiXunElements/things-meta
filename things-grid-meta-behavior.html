@@ -160,9 +160,11 @@ Things.GridMetaBehavior = {
 					field.styles.numberFormat = metaData.grid_format ? metaData.grid_format : '0,000';
 
 				} else if(editor == 'date-picker' || editor == 'time-picker') {
-					field.editor = { type: 'date' };
+					field.editable = false;
+					field.styles.iconIndex = 'date-picker';
 					field.styles.datetimeFormat = metaData.grid_format ? metaData.grid_format : 'yyyy-MM-dd';
 					field.styles.textAlignment = 'center';
+
 
 				} else if(editor.indexOf('resource-column') >= 0) {
 					me._newResourceColumn(metaData, field);
