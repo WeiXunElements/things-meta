@@ -165,7 +165,6 @@ Things.GridMetaBehavior = {
 					field.styles.datetimeFormat = metaData.grid_format ? metaData.grid_format : 'yyyy-MM-dd';
 					field.styles.textAlignment = 'center';
 
-
 				} else if(editor.indexOf('resource-column') >= 0) {
 					me._newResourceColumn(metaData, field);
 
@@ -173,6 +172,10 @@ Things.GridMetaBehavior = {
 					me._newResourceColumn(metaData, field);
 					me._setResourceEditorColumn(metaData, field, resourceSelectorColumns);
 
+				} else if (editor.indexOf('image-selector') >= 0) {
+					field.editable = false;
+					field.styles.iconIndex = 'image-selector';
+					
 				} else if(editor == 'download-link') {
 					field.renderer = {
 						type: 'link',
@@ -187,6 +190,7 @@ Things.GridMetaBehavior = {
 				} else if(editor == 'readonly') {
 					field.editable = false;
 				}
+
 			}
 
 			if(metaData.name != 'id' && !metaData.nullable) {
