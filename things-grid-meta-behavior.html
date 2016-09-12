@@ -93,6 +93,14 @@ Things.GridMetaBehavior = {
 				field.dataType = 'object';
 			}
 
+			if(editor && editor.indexOf('resource-format-selector') >= 0) {
+				if(field.fieldName.indexOf('_id') >= 0) {
+					field.fieldName = field.fieldName.substr(0, field.fieldName.indexOf('_id'));
+				}
+
+				field.dataType = 'object';
+			}
+
 			if(selectColumns.length > 2) {
 				this.selectFields = selectColumns.substr(0, selectColumns.length - 1);	
 			}			
@@ -171,6 +179,18 @@ Things.GridMetaBehavior = {
 				} else if(editor.indexOf('resource-selector') >= 0) {
 					me._newResourceColumn(metaData, field);
 					me._setResourceEditorColumn(metaData, field, resourceSelectorColumns);
+
+				} else if(editor.indexOf('resource-format-selector') >= 0) {
+					field.editable = false;
+					field.styles.iconIndex = 'resource-format-selector';
+					field.userObj = {
+						resourceType: metaData.ref_type,
+						resourceName: metaData.ref_name,
+						initialParams : metaData.ref_params,
+						ownerField: field.name,
+						bindFields: metaData.ref_related,
+						valueField: metaData.grid_format
+					};
 
 				} else if (editor.indexOf('image-selector') >= 0) {
 					field.editable = false;
@@ -276,7 +296,7 @@ Things.GridMetaBehavior = {
 				resourceName: metaData.ref_name,
 				initialParams : metaData.ref_params,
 				ownerField: field.name,
-				bindFields : metaData.ref_related
+				bindFields: metaData.ref_related
 			}
 		};
 
