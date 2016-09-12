@@ -131,9 +131,9 @@ Things.SearchFormMetaBehavior = {
 			if(resourceForm) {
 				field.name = field.name.substr(0, field.name.indexOf('_id'));
 				field.type = 'resource-field';
-			} else if (editor.indexOf('resource-selector') >= 0 ) {
+			} else if (editor == 'resource-selector' ) {
 				field.type = 'resource-selector';
-			} else if (editor.indexOf('resource-selector-by-format') >= 0 ) {
+			} else if (editor == 'resource-selector-by-format') {
 				field.type = 'resource-selector-by-format'
 			}
 		}
