@@ -114,7 +114,7 @@ Things.SearchFormMetaBehavior = {
 		if('code-combo' == editor) {
 			field.codeName = metaData.ref_name;
 
-		} else if(editor.indexOf('resource-selector') >= 0 || editor.indexOf('resource-selector-by-format') >= 0 || editor.indexOf('resource-field') >= 0 || editor.indexOf('resource-combo') >= 0) {
+		} else if(editor.indexOf('resource-selector') >= 0 || editor.indexOf('resource-format-selector') >= 0 || editor.indexOf('resource-field') >= 0 || editor.indexOf('resource-combo') >= 0) {
 			field.userObj = {
 				resourceType : metaData.ref_type,
 				resourceName : metaData.ref_name,
