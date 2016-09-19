@@ -102,6 +102,10 @@ Things.DetailFormMetaBehavior = {
 		} else if('readonly' == editor) {
 			field.userObj = { readonly: true };
 		}
+
+		if(metaData.def_val) {
+			field.default = metaData.def_val;
+		}
 	}
 
 };
