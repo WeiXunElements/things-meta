@@ -184,7 +184,7 @@ Things.GridMetaBehavior = {
           me._newResourceColumn(metaData, field);
 
         } else if(editor.indexOf('resource-selector') >= 0) {
-          me._newResourceColumn(metaData, field);
+        	me._newResourceColumn(metaData, field);
           field.editable = false;
           field.styles.iconIndex = 'resource-selector';
           field.userObj = {
@@ -274,19 +274,45 @@ Things.GridMetaBehavior = {
    *
    * @param {Object} metaData
    * @param {Object} field
-   * @param {String} titleField
    */
   _newResourceColumn: function(metaData, field) {
     var titleField = metaData.grid_format ? metaData.grid_format : 'name';
+    field.userData = { titleField : titleField };
     field.name = field.name.substr(0, field.name.indexOf('_id'));
-    field.valueType = 'text';
-    field.type = 'calced';
     field.fieldName = field.name;
 
-    field.valueCallback = function(column, row) {
-      var obj = row.getValue(column._name);
-      return obj ? obj[titleField] : '';
+    // 1. Object 형식의 데이터를 화면에 표시하기 위한 콜백 함수 
+    field.displayCallback = function(index, value) {
+      var rowObj = index.getRow().getRowObject();
+      var fieldName = index.column.dataFieldName();
+      var userData = index.column.userData();
+      var columnObj = rowObj[fieldName];
+      var retVal = columnObj ? columnObj[userData.titleField] : '';
+      return retVal;
     };
+
+    /*field.valueType = 'text';
+    field.type = 'calced';
+    field.valueCallback = function(column, row) {
+      var userData = column.userData();
+      var titleField = userData.titleField;
+      var obj = row.getValue(column.name());
+      return obj ? obj[titleField] : '';
+    };*/
+
+    // 2. Object 형식의 데이터를 Text 형식으로 클립보드에 전달 
+    field.copyCallback = function (row, field, value) {
+      var strValue = value ? JSON.stringify(value) : value;
+      return strValue;
+    };
+
+    // 3. Text 형식으로 전달된 클립보드 데이터를 전달받아 Paste Logic 수행 
+    field.pasteCallback = function(row, field, value) {
+      var rowObj = row.getRowObject();
+      var resourceObj = value ? JSON.parse(value) : value;
+      rowObj[field.fieldName()] = resourceObj;
+      return field.readValue(resourceObj);
+    }
   },
 
   /**
