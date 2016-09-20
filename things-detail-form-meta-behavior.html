@@ -87,6 +87,9 @@ Things.DetailFormMetaBehavior = {
 				field.type = 'resource-selector';
 			}
 			
+		} else if ('number' == editor) {
+			field.userObj.type = metaData.col_type;
+
 		} else if('text' == editor) {
 			if(!field.userObj) field.userObj = {};
 			if(!metaData.nullable) field.userObj.required = true;

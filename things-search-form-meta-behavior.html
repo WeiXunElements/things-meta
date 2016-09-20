@@ -136,6 +136,8 @@ Things.SearchFormMetaBehavior = {
 			} else if (editor == 'resource-selector-by-format') {
 				field.type = 'resource-selector-by-format'
 			}
+		} else if (editor == 'number') {
+			field.userObj.type = metaData.col_type;
 		}
 	},
 
