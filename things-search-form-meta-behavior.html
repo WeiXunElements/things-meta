@@ -124,21 +124,21 @@ Things.SearchFormMetaBehavior = {
 				submitName : field.name
 			};
 			
-			if(editor.indexOf('.') > 0) {
-				field.userObj.delegateColumn = editor.split('.')[1];
-			}
+			if(editor.indexOf('.') > 0) field.userObj.delegateColumn = editor.split('.')[1];
 
 			if(resourceForm) {
 				field.name = field.name.substr(0, field.name.indexOf('_id'));
 				field.type = 'resource-field';
+
 			} else if (editor == 'resource-selector' ) {
 				field.type = 'resource-selector';
+
 			} else if (editor == 'resource-selector-by-format') {
 				field.type = 'resource-selector-by-format'
 			}
+
 		} else if (editor == 'number') {
-			field.userObj = {};
-			field.userObj.type = metaData.col_type;
+			field.userObj = { type : metaData.col_type };
 		}
 	},
 
@@ -149,8 +149,7 @@ Things.SearchFormMetaBehavior = {
 		list.sort(function(a, b) {
 			return (a[sortField] > b[sortField]) ? 1 : ((b[sortField] > a[sortField]) ? -1 : 0);
 		});
-	}	
-
+	}
 };
 
 </script>

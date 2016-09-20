@@ -76,20 +76,18 @@ Things.DetailFormMetaBehavior = {
 				submitName : field.name
 			};
 			
-			if(editor.indexOf('.') > 0) {
-				field.userObj.delegateColumn = editor.split('.')[1];
-			}
+			if(editor.indexOf('.') > 0) field.userObj.delegateColumn = editor.split('.')[1];
 
 			if(resourceForm) {
 				field.name = field.name.substr(0, field.name.indexOf('_id'));
 				field.type = 'resource-field';
+
 			} else {
 				field.type = 'resource-selector';
 			}
 			
 		} else if ('number' == editor) {
-			field.userObj = {};
-			field.userObj.type = metaData.col_type;
+			field.userObj = { type : metaData.col_type };
 
 		} else if('text' == editor) {
 			if(!field.userObj) field.userObj = {};
@@ -111,7 +109,6 @@ Things.DetailFormMetaBehavior = {
 			field.default = metaData.def_val;
 		}
 	}
-
 };
 
 </script>
