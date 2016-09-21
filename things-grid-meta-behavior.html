@@ -182,24 +182,23 @@ Things.GridMetaBehavior = {
 
         } else if(editor.indexOf('resource-column') >= 0) {
           me._newResourceColumn(metaData, field);
+          field.editable = false;
 
         } else if(editor.indexOf('resource-selector') >= 0) {
         	me._newResourceColumn(metaData, field);
           field.editable = false;
           field.styles.iconIndex = 'resource-selector';
-          field.userObj = {
-            resourceType: metaData.ref_type,
-            resourceName: metaData.ref_name,
-            initialParams : metaData.ref_params,
-            ownerField: field.name,
-            bindFields: metaData.ref_related
-          };
+          field.userData.resourceType = metaData.ref_type;
+          field.userData.resourceName = metaData.ref_name;
+          field.userData.initialParams = metaData.ref_params;
+          field.userData.ownerField = field.name;
+          field.userData.bindFields = metaData.ref_related;
           //me._setResourceEditorColumn(metaData, field, resourceSelectorColumns);
 
         } else if(editor.indexOf('resource-format-selector') >= 0) {
           field.editable = false;
           field.styles.iconIndex = 'resource-format-selector';
-          field.userObj = {
+          field.userData = {
             resourceType: metaData.ref_type,
             resourceName: metaData.ref_name,
             initialParams : metaData.ref_params,
@@ -338,7 +337,7 @@ Things.GridMetaBehavior = {
         iconIndex: 'menu_button.png',
         iconLocation: 'center'
       },
-      userObj: {
+      userData: {
         resourceType: metaData.ref_type,
         resourceName: metaData.ref_name,
         initialParams : metaData.ref_params,

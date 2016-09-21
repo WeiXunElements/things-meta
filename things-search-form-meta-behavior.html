@@ -114,8 +114,12 @@ Things.SearchFormMetaBehavior = {
 		if('code-combo' == editor) {
 			field.codeName = metaData.ref_name;
 
-		} else if(editor.indexOf('resource-selector') >= 0 || editor.indexOf('resource-format-selector') >= 0 || editor.indexOf('resource-field') >= 0 || editor.indexOf('resource-combo') >= 0 || editor.indexOf('date-from-to-picker') >= 0) {
-			field.userObj = {
+		} else if(editor.indexOf('resource-selector') >= 0 || 
+			        editor.indexOf('resource-format-selector') >= 0 || 
+			        editor.indexOf('resource-field') >= 0 || 
+			        editor.indexOf('resource-combo') >= 0 || 
+			        editor.indexOf('date-from-to-picker') >= 0) {
+			field.userData = {
 				resourceType : metaData.ref_type,
 				resourceName : metaData.ref_name,
 				initialParams : metaData.ref_params,
@@ -124,7 +128,7 @@ Things.SearchFormMetaBehavior = {
 				submitName : field.name
 			};
 			
-			if(editor.indexOf('.') > 0) field.userObj.delegateColumn = editor.split('.')[1];
+			if(editor.indexOf('.') > 0) field.userData.delegateColumn = editor.split('.')[1];
 
 			if(resourceForm) {
 				field.name = field.name.substr(0, field.name.indexOf('_id'));
@@ -138,7 +142,7 @@ Things.SearchFormMetaBehavior = {
 			}
 
 		} else if (editor == 'number') {
-			field.userObj = { type : metaData.col_type };
+			field.userData = { type : metaData.col_type };
 		}
 	},
 

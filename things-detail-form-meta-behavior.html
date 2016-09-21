@@ -66,8 +66,12 @@ Things.DetailFormMetaBehavior = {
 		if('code-combo' == editor) {
 			field.codeName = metaData.ref_name;
 
-		} else if(editor.indexOf('resource-selector') >= 0 || editor.indexOf('resource-format-selector') >= 0 || editor.indexOf('resource-field') >= 0 || editor.indexOf('resource-combo') >= 0 || editor.indexOf('date-from-to-picker') >= 0) {
-			field.userObj = {
+		} else if(editor.indexOf('resource-selector') >= 0 || 
+							editor.indexOf('resource-format-selector') >= 0 || 
+							editor.indexOf('resource-field') >= 0 || 
+							editor.indexOf('resource-combo') >= 0 || 
+							editor.indexOf('date-from-to-picker') >= 0) {
+			field.userData = {
 				delegateColumn : 'name',
 				resourceType : metaData.ref_type,
 				resourceName : metaData.ref_name,
@@ -76,7 +80,7 @@ Things.DetailFormMetaBehavior = {
 				submitName : field.name
 			};
 			
-			if(editor.indexOf('.') > 0) field.userObj.delegateColumn = editor.split('.')[1];
+			if(editor.indexOf('.') > 0) field.userData.delegateColumn = editor.split('.')[1];
 
 			if(resourceForm) {
 				field.name = field.name.substr(0, field.name.indexOf('_id'));
@@ -87,22 +91,21 @@ Things.DetailFormMetaBehavior = {
 			}
 			
 		} else if ('number' == editor) {
-			field.userObj = { type : metaData.col_type };
+			field.userData = { type : metaData.col_type };
 
 		} else if('text' == editor) {
-			if(!field.userObj) field.userObj = {};
-			if(!metaData.nullable) field.userObj.required = true;
-			if(metaData.col_size && metaData.col_size > 0) field.userObj.max = metaData.col_size;
-			if(metaData.col_type) field.userObj.type = metaData.col_type;
+			field.userData = { type : metaData.col_type };
+			if(!metaData.nullable) field.userData.required = true;
+			if(metaData.col_size && metaData.col_size > 0) field.userData.max = metaData.col_size;
 			if(metaData.form_validator) {
-				field.userObj.validator = metaData.form_validator.replace('things.', 'things-validator-'); 
+				field.userData.validator = metaData.form_validator.replace('things.', 'things-validator-'); 
 			}
 
 		} else if('hidden' == editor) {
-			field.userObj = { hidden: true };
+			field.userData = { hidden: true };
 			
 		} else if('readonly' == editor) {
-			field.userObj = { readonly: true };
+			field.userData = { readonly: true };
 		}
 
 		if(metaData.def_val) {
