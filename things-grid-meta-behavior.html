@@ -225,11 +225,11 @@ Things.GridMetaBehavior = {
         } else if(editor == 'readonly') {
           field.editable = false;
 
-        } else {
+        } /*else {
           if(metaData.col_size && metaData.col_size > 0 && metaData.col_type == 'string') {
             field.editor = { maxLength : metaData.col_size };
           }
-        }
+        }*/
       }
 
       if(metaData.name != 'id' && !metaData.nullable) {
