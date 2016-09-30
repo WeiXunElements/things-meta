@@ -225,11 +225,11 @@ Things.GridMetaBehavior = {
         } else if(editor == 'readonly') {
           field.editable = false;
 
-        } /*else {
+        } else {
           if(metaData.col_size && metaData.col_size > 0 && metaData.col_type == 'string') {
             field.editor = { maxLength : metaData.col_size };
           }
-        }*/
+        }
       }
 
       if(metaData.name != 'id' && !metaData.nullable) {
@@ -245,7 +245,7 @@ Things.GridMetaBehavior = {
       if(metaData.col_size && metaData.col_size > 0 && metaData.col_type == 'string') {
         field.validations.push({
           level: 'error', 
-          expression : 'len value < ' + metaData.col_size, 
+          expression : 'len value <= ' + metaData.col_size, 
           message: Things.DataGlobal.t('error.MAX_LENGTH_OF_X_IS_Y', { 
             name : Things.DataGlobal.tt(metaData.term), value : metaData.col_size
           })
