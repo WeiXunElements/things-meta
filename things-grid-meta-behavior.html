@@ -1,5 +1,7 @@
 <link rel="import" href="../polymer/polymer.html">
 
+<link rel="import" href="../things-global-behavior/things-global-behavior.html">
+
 <script>
 
 window.Things = window.Things || {};
@@ -10,7 +12,7 @@ window.Things = window.Things || {};
  *
  * @polymerBehavior Things.GridMetaBehavior
  */
-Things.GridMetaBehavior = {
+Things.GridMetaBehaviorImpl = {
 
   properties: {
     /**
@@ -141,7 +143,7 @@ Things.GridMetaBehavior = {
     var me = this;
 
     var gColumns = gridColumnMetaList.map(function(metaData) {
-      var field = { 
+      var field = {
         name: metaData.name, 
         fieldName: metaData.name, 
         width: metaData.grid_width ? metaData.grid_width : 100,
@@ -187,7 +189,7 @@ Things.GridMetaBehavior = {
           field.editable = false;
 
         } else if(editor.indexOf('resource-selector') >= 0) {
-        	me._newResourceColumn(metaData, field);
+          me._newResourceColumn(metaData, field);
           field.editable = false;
           field.styles.iconIndex = 'resource-selector';
           field.userData.resourceType = metaData.ref_type;
@@ -212,6 +214,21 @@ Things.GridMetaBehavior = {
         } else if (editor.indexOf('image-selector') >= 0) {
           field.editable = false;
           field.styles.iconIndex = 'image-selector';
+
+        } else if (editor.indexOf('image-renderer') >= 0) {
+          field.editable = false;
+          field.styles.iconIndex = 'image-renderer';
+          field.type = 'calced';
+          field.renderer = { type: 'image', imageDisplay: DataLudi.ImageDisplay.NORMAL };
+          
+          var baseUrl = me.globals.baseUrl;
+          field.valueCallback = function(column, row) {
+            var imgId = row.getValue(field.name);
+            if(imgId)
+              return baseUrl + '/download/' + imgId;
+            else
+              return '';
+          };
           
         } else if(editor == 'download-link') {
           field.renderer = {
@@ -361,4 +378,8 @@ Things.GridMetaBehavior = {
   }
 };
 
+Things.GridMetaBehavior = [
+  Things.GridMetaBehaviorImpl,
+  Things.GlobalBehavior
+];
 </script>
