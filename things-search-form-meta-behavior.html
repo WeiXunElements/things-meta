@@ -117,32 +117,36 @@ Things.SearchFormMetaBehavior = {
 		} else if(editor.indexOf('resource-selector') >= 0 || 
 			        editor.indexOf('resource-format-selector') >= 0 || 
 			        editor.indexOf('resource-field') >= 0 || 
-			        editor.indexOf('resource-combo') >= 0 || 
-			        editor.indexOf('date-from-to-picker') >= 0) {
+			        editor.indexOf('resource-combo') >= 0) {
 			field.userData = {
 				resourceType : metaData.ref_type,
 				resourceName : metaData.ref_name,
 				initialParams : metaData.ref_params,
 				bindFields : metaData.ref_related,
-				formFormat : metaData.form_format,
 				submitName : field.name
 			};
 			
-			if(editor.indexOf('.') > 0) field.userData.delegateColumn = editor.split('.')[1];
-
-			if(resourceForm) {
-				field.name = field.name.substr(0, field.name.indexOf('_id'));
-				field.type = 'resource-field';
-
-			} else if (editor == 'resource-selector' ) {
-				field.type = 'resource-selector';
-
-			} else if (editor == 'resource-selector-by-format') {
-				field.type = 'resource-selector-by-format'
+			if(editor.indexOf('.') > 0) {
+				var editorSplitArr = editor.split('.');
+				field.type = editorSplitArr[0];
+				field.userData.delegateColumn = editorSplitArr[1];
+			} else {
+				field.type = editor;
 			}
 
+			if(field.type == 'resource-combo') {
+				field.userData.delegateColumn = metaData.form_format ? metaData.form_format : 'id';
+			}
+
+			if(field.type == 'resource-format-selector') {
+				field.userData.delegateColumn = metaData.form_format ? metaData.form_format : 'name';
+			}
+			
 		} else if (editor == 'number') {
 			field.userData = { type : metaData.col_type };
+
+		} else if('date-from-to-picker' == editor) {
+			field.userData = { formFormat : metaData.form_format };
 		}
 	},
 
