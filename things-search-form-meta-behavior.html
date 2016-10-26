@@ -83,7 +83,6 @@ Things.SearchFormMetaBehavior = {
 		var searchMetaList = metaDataList.filter(function(metaData) {
 			return metaData.search_rank && metaData.search_rank > 0; 
 		});
-
 		this._sortMetaData(searchMetaList, 'search_rank');
 		var me = this;
 		
@@ -92,6 +91,7 @@ Things.SearchFormMetaBehavior = {
 				name : metaData.name, 
 				label : Things.DataGlobal.tt(metaData.term),
 				type : metaData.search_editor,
+				tabindex : metaData.search_rank,
 				op : metaData.search_oper ? metaData.search_oper : 'eq'
 			};
 			
