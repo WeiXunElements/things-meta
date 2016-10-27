@@ -28,6 +28,10 @@ Things.DetailFormMetaBehavior = {
 			value: function() {
 				return [];
 			}
+		},
+		_tabindex: {
+			type: Number,
+			value: 1
 		}
 	},
 
@@ -43,8 +47,9 @@ Things.DetailFormMetaBehavior = {
 			var field = { 
 				name : metaData.name, 
 				label : Things.DataGlobal.tt(metaData.term),
-				type : metaData.form_editor 
+				type : metaData.form_editor
 			};
+			field.tabindex = me.setTabindex(metaData.form_editor,metaData);
 
 			if(metaData.ignore_on_save) me.ignoreFieldsOnSave.push(metaData.name);
 			if(!metaData.form_editor) metaData.form_editor = 'text';
@@ -52,7 +57,21 @@ Things.DetailFormMetaBehavior = {
 			return field;
 		});		
 	},
-
+	/**
+	 * text/number/password/textarea/code-combo/resource-combo에는 tabindex를 주고 
+	 * 남은 에디터는 tabIndex를 주지 않는다.
+	 * 
+	 * @param {[type]} editorType [description]
+	 * @param {[type]} metaData   [description]
+	 */
+	setTabindex : function(editorType,metaData){
+		if(editorType =='text'||editorType =='number'||editorType =='password'||
+		   editorType =='textarea'||editorType=='code-combo'||editorType =='resource-combo'){
+			return 0
+		}else{
+			return -1
+		}
+	},
 	/**
 	 * form field를 파싱한다.
 	 *
