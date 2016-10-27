@@ -49,7 +49,7 @@ Things.DetailFormMetaBehavior = {
 				label : Things.DataGlobal.tt(metaData.term),
 				type : metaData.form_editor
 			};
-			field.tabindex = me.setTabindex(metaData.form_editor,metaData);
+			field.tabIndex = me.setTabindex(metaData.form_editor,metaData);
 
 			if(metaData.ignore_on_save) me.ignoreFieldsOnSave.push(metaData.name);
 			if(!metaData.form_editor) metaData.form_editor = 'text';
@@ -67,7 +67,7 @@ Things.DetailFormMetaBehavior = {
 	setTabindex : function(editorType,metaData){
 		if(editorType =='text'||editorType =='number'||editorType =='password'||
 		   editorType =='textarea'||editorType=='code-combo'||editorType =='resource-combo'){
-			return 0
+			return this._tabindex++
 		}else{
 			return -1
 		}
