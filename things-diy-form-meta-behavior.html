@@ -1,0 +1,78 @@
+<link rel="import" href="../polymer/polymer.html">
+
+<link rel="import" href="./things-detail-form-meta-behavior.html">
+
+<script>
+
+window.Things = window.Things || {};
+
+/**
+ * Diy Form 메타 데이터를 조회하여 모델 정보를 제공하는 Behavior
+ *
+ * @polymerBehavior Things.DiyFormMetaBehavior
+ */
+Things.DiyFormMetaBehaviorImpl = {
+
+	properties: {
+		/**
+		 * DiyForm ID
+		 */
+		diyFormId: {
+			type: String
+		},
+
+		/**
+		 * 화면 구성을 위해 필요한 메뉴 메타 데이터를 조회하기 위한 URL
+		 */
+		formMetaUrl: {
+			type: String,
+			computed: '_computeFormMetaUrl(diyFormId)'
+		},
+
+		/**
+		 * Menu meta data - gridModel, gridColumns, buttons 등을 파싱한다. 
+		 */
+		metaData: {
+			type: Array,
+			observer: 'parseMetaData'
+		},
+
+		/**
+		 * Form Fields
+		 */
+		formFields: {
+			type: Array,
+			notify: true
+		}
+	},
+
+	/**
+	 * diyFormId로 부터 Diy Form 메타 데이터 조 URL을 생성
+	 *
+	 * @param {String} diyFormId
+	 * @return {String} Get DiyForm Meta URL
+	 */
+	_computeFormMetaUrl: function(diyFormId) {
+		return 'view_columns/DiyForm/' + diyFormId + '/meta';
+	},
+
+	/**
+	 * meta data를 파싱한다.
+	 *
+	 * @param {Array} metaData
+	 */
+	parseMetaData: function(metaData) {
+		if(!metaData || metaData.length == 0) return;
+
+		// 1. Parse Form Fields - detail form
+		this.formFields = this._parseResourceFormFields(metaData.columns);
+	}	
+
+};
+
+Things.DiyFormMetaBehavior = [
+	Things.DiyFormMetaBehaviorImpl,
+	Things.DetailFormMetaBehavior
+];
+
+</script>
