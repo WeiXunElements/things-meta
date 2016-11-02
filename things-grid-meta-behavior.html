@@ -105,8 +105,6 @@ Things.GridMetaBehaviorImpl = {
         field.dataType = 'object';
       }
 
-      if(!field.dataType) field.dataType = 'string';
-
       if(field.dataType != 'object' && metaData.def_val) {
         field.defaultValue = (field.dataType == 'number') ? Number(metaData.def_val) : metaData.def_val;
       }
@@ -138,8 +136,6 @@ Things.GridMetaBehaviorImpl = {
     });
 
     this._sortMetaData(gridColumnMetaList, 'grid_rank');
-    // resource selector 컬럼 
-    //var me = this, resourceSelectorColumns = [];
     var me = this;
 
     var gColumns = gridColumnMetaList.map(function(metaData) {
@@ -197,7 +193,6 @@ Things.GridMetaBehaviorImpl = {
           field.userData.initialParams = metaData.ref_params;
           field.userData.ownerField = field.name;
           field.userData.bindFields = metaData.ref_related;
-          //me._setResourceEditorColumn(metaData, field, resourceSelectorColumns);
 
         } else if(editor.indexOf('resource-format-selector') >= 0) {
           field.editable = false;
@@ -210,7 +205,15 @@ Things.GridMetaBehaviorImpl = {
             bindFields: metaData.ref_related,
             valueField: metaData.grid_format
           };
-
+        } else if (editor == 'date') {
+          field.styles = { datetimeFormat: 'yyyy-MM-dd' };
+          field.editor = { type: 'mask', mask: '0000-00-00', datetimeFormat: 'yyyy-MM-dd'};
+        } else if (editor == 'time') {
+          field.styles = { datetimeFormat: 'hh:mm:ss'};
+          field.editor = { type: 'mask', mask: '00:00:00', datetimeFormat: 'hh:mm:ss'};
+        } else if (editor == 'datetime') {
+          field.styles = { datetimeFormat: 'yyyy-MM-dd hh:mm:ss' };
+          field.editor = { type: 'mask', mask: '0000-00-00 00:00:00', datetimeFormat: 'yyyy-MM-dd hh:mm:ss', includeLiterals: true};
         } else if (editor.indexOf('image-selector') >= 0) {
           field.editable = false;
           field.styles.iconIndex = 'image-selector';
@@ -253,39 +256,14 @@ Things.GridMetaBehaviorImpl = {
 
       if(metaData.name != 'id' && metaData.nullable) {
         field.nullable = metaData.nullable
-        // field.validations.push({
-        //   level: 'error', 
-        //   expression : 'value is not empty',
-        //   message: Things.DataGlobal.t('error.SHOULD_NOT_BE_EMPTY', { 
-        //     value : Things.DataGlobal.tt(metaData.term) 
-        //   })
-        // });
       }
 
       if(metaData.col_size && metaData.col_size > 0 && metaData.col_type == 'string') {
         field.maxValueLength = metaData.col_size
-        // field.validations.push({
-        //   level: 'error', 
-        //   expression : 'len value <= ' + metaData.col_size, 
-        //   message: Things.DataGlobal.t('error.MAX_LENGTH_OF_X_IS_Y', { 
-        //     name : Things.DataGlobal.tt(metaData.term), value : metaData.col_size
-        //   })
-        // });
       }
 
       return field;
     });
-
-    // Resource Selector가 있을 경우 컬럼 추가 
-    /*if(resourceSelectorColumns.length > 0) {
-      resourceSelectorColumns.forEach(function(rec) {
-        var oriFieldName = rec.fieldName.substr(0, rec.fieldName.indexOf('_id'));
-        var foundFields = gColumns.filter(function(col) { return col.name == oriFieldName});
-        var foundIdx = gColumns.indexOf(foundFields[0]);
-        gColumns.splice(foundIdx + 1, 0, rec);
-      });
-    }*/
-
     return gColumns;
   },
 
@@ -308,17 +286,11 @@ Things.GridMetaBehaviorImpl = {
       var userData = index.column.userData();
       var columnObj = rowObj[fieldName];
       var retVal = columnObj ? columnObj[userData.titleField] : '';
+      if(columnObj && columnObj.description) {
+        retVal = retVal + ' (' + columnObj.description + ')';
+      }
       return retVal;
     };
-
-    /*field.valueType = 'text';
-    field.type = 'calced';
-    field.valueCallback = function(column, row) {
-      var userData = column.userData();
-      var titleField = userData.titleField;
-      var obj = row.getValue(column.name());
-      return obj ? obj[titleField] : '';
-    };*/
 
     // 2. Object 형식의 데이터를 Text 형식으로 클립보드에 전달 
     field.copyCallback = function (row, field, value) {
@@ -334,41 +306,6 @@ Things.GridMetaBehaviorImpl = {
       return field.readValue(resourceObj);
     }
   },
-
-  /**
-   * resource editor column 설정 
-   *
-   * @param {Object} metaData
-   * @param {Object} field
-   * @param {Array} resourceSelectorColumns
-   */
-  /*_setResourceEditorColumn: function(metaData, field, resourceSelectorColumns) {
-    var editorField = {
-      name: metaData.name, 
-      fieldName: metaData.name, 
-      header: { text: ' ' },
-      width: 30,
-      editable: false,
-      header: { text: '...' },
-      imageList: 'images',
-      renderer: {
-        type: 'icon'
-      },
-      styles: {
-        iconIndex: 'menu_button.png',
-        iconLocation: 'center'
-      },
-      userData: {
-        resourceType: metaData.ref_type,
-        resourceName: metaData.ref_name,
-        initialParams : metaData.ref_params,
-        ownerField: field.name,
-        bindFields: metaData.ref_related
-      }
-    };
-
-    resourceSelectorColumns.push(editorField);
-  },*/
 
   /**
    * list sorting
