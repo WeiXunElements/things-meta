@@ -101,8 +101,6 @@ Things.GridMetaBehaviorImpl = {
         if(field.fieldName.indexOf('_id') >= 0) {
           field.fieldName = field.fieldName.substr(0, field.fieldName.indexOf('_id'));
         }
-
-        field.dataType = 'object';
       }
 
       if(field.dataType != 'object' && metaData.def_val) {
@@ -205,15 +203,19 @@ Things.GridMetaBehaviorImpl = {
             bindFields: metaData.ref_related,
             valueField: metaData.grid_format
           };
+
         } else if (editor == 'date') {
           field.styles = { datetimeFormat: 'yyyy-MM-dd' };
           field.editor = { type: 'mask', mask: '0000-00-00', datetimeFormat: 'yyyy-MM-dd'};
+
         } else if (editor == 'time') {
           field.styles = { datetimeFormat: 'hh:mm:ss'};
           field.editor = { type: 'mask', mask: '00:00:00', datetimeFormat: 'hh:mm:ss'};
+
         } else if (editor == 'datetime') {
           field.styles = { datetimeFormat: 'yyyy-MM-dd hh:mm:ss' };
           field.editor = { type: 'mask', mask: '0000-00-00 00:00:00', datetimeFormat: 'yyyy-MM-dd hh:mm:ss', includeLiterals: true};
+
         } else if (editor.indexOf('image-selector') >= 0) {
           field.editable = false;
           field.styles.iconIndex = 'image-selector';
@@ -227,10 +229,7 @@ Things.GridMetaBehaviorImpl = {
           var baseUrl = me.globals.baseUrl;
           field.valueCallback = function(column, row) {
             var imgId = row.getValue(field.name);
-            if(imgId)
-              return baseUrl + '/download/' + imgId;
-            else
-              return '';
+            return imgId ? baseUrl + '/download/' + imgId : '';
           };
           
         } else if(editor == 'download-link') {
@@ -264,6 +263,7 @@ Things.GridMetaBehaviorImpl = {
 
       return field;
     });
+
     return gColumns;
   },
 
@@ -294,16 +294,12 @@ Things.GridMetaBehaviorImpl = {
 
     // 2. Object 형식의 데이터를 Text 형식으로 클립보드에 전달 
     field.copyCallback = function (row, field, value) {
-      var strValue = value ? JSON.stringify(value) : value;
-      return strValue;
-    };
+      return value ? JSON.stringify(value) : value;
+    },
 
     // 3. Text 형식으로 전달된 클립보드 데이터를 전달받아 Paste Logic 수행 
-    field.pasteCallback = function(row, field, value) {
-      var rowObj = row.getRowObject();
-      var resourceObj = value ? JSON.parse(value) : value;
-      rowObj[field.fieldName()] = resourceObj;
-      return field.readValue(resourceObj);
+    field.pasteCallback = function (row, field, text) {
+      return text ? JSON.parse(text) : text;
     }
   },
 
