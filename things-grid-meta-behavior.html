@@ -206,15 +206,15 @@ Things.GridMetaBehaviorImpl = {
 
         } else if (editor == 'date') {
           field.styles = { datetimeFormat: 'yyyy-MM-dd' };
-          field.editor = { type: 'mask', mask: '0000-00-00', datetimeFormat: 'yyyy-MM-dd'};
+          field.editor = { type: 'mask', mask: '0000-00-00', datetimeFormat: 'yyyy-MM-dd' };
 
         } else if (editor == 'time') {
           field.styles = { datetimeFormat: 'hh:mm:ss'};
-          field.editor = { type: 'mask', mask: '00:00:00', datetimeFormat: 'hh:mm:ss'};
+          field.editor = { type: 'mask', mask: '00:00:00', datetimeFormat: 'hh:mm:ss' };
 
         } else if (editor == 'datetime') {
           field.styles = { datetimeFormat: 'yyyy-MM-dd hh:mm:ss' };
-          field.editor = { type: 'mask', mask: '0000-00-00 00:00:00', datetimeFormat: 'yyyy-MM-dd hh:mm:ss', includeLiterals: true};
+          field.editor = { type: 'mask', mask: '0000-00-00 00:00:00', datetimeFormat: 'yyyy-MM-dd hh:mm:ss', includeLiterals: true };
 
         } else if (editor.indexOf('image-selector') >= 0) {
           field.editable = false;
@@ -253,8 +253,8 @@ Things.GridMetaBehaviorImpl = {
         }
       }
 
-      if(metaData.name != 'id' && metaData.nullable) {
-        field.nullable = metaData.nullable
+      if(metaData.name != 'id') {
+        field.nullable = (typeof metaData.nullable == 'undefined') ? false : metaData.nullable;
       }
 
       if(metaData.col_size && metaData.col_size > 0 && metaData.col_type == 'string') {
