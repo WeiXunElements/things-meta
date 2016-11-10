@@ -92,6 +92,8 @@ Things.EntityMetaBehaviorImpl = {
 		this.gridModel = this._parseGridModel(entityColumns);
 		// 6. Parse Grid Columns - grid form
 		this.gridColumns = this._parseGridColumns(entityColumns);
+
+		this.fire('things-entity-meta-configured', null);
 	}
 
 };
