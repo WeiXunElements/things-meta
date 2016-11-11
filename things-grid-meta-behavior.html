@@ -184,6 +184,8 @@ Things.GridMetaBehaviorImpl = {
 
         } else if(editor.indexOf('resource-selector') >= 0) {
           me._newResourceColumn(metaData, field);
+          field.button = 'action';
+          field.buttonVisibility = 'always';          
           field.editable = false;
           field.styles.iconIndex = 'resource-selector';
           field.userData.resourceType = metaData.ref_type;
@@ -239,6 +241,10 @@ Things.GridMetaBehaviorImpl = {
             showUrl: true,
             url: (metaData.grid_format ? metaData.grid_format : '') + "/${id}"
           }
+
+        } else if(editor == 'textarea') {
+          field.editor = { type: 'multiline', maxLength: metaData.col_size ? metaData.col_size : 255 };
+          field.styles = { textWrap: DataLudi.TextWrap.EXPLICIT };
 
         } else if(editor == 'hidden') {
           field.width = 0;
