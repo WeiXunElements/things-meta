@@ -47,7 +47,14 @@ Things.SearchFormMetaBehavior = {
 			return (metaData.name == 'id' || (metaData.grid_rank && metaData.grid_rank > 0));
 		});
 
-		var selectColumns = listMetaList.map(function(metaData) { return metaData.name; });
+		var selectColumns = listMetaList.map(function(metaData) { 
+			if(metaData.grid_editor && (metaData.grid_editor.indexOf('resource-selector') >= 0 || metaData.grid_editor.indexOf('resource-column') >= 0)) {
+				return metaData.name.substr(0, metaData.name.indexOf('_id'));
+			} else {
+				return metaData.name; 
+			}
+		});
+		
 		return selectColumns.join(',');
 	},
 
