@@ -137,18 +137,23 @@ Things.SearchFormMetaBehavior = {
 				var editorSplitArr = editor.split('.');
 				field.type = editorSplitArr[0];
 				field.userData.delegateColumn = editorSplitArr[1];
+
 			} else {
 				field.type = editor;
 			}
 
 			if(field.type == 'resource-combo') {
-				field.userData.delegateColumn = metaData.form_format ? metaData.form_format : 'id';
+				field.userData.delegateColumn = metaData.search_name ? metaData.search_name : 'id';
 			}
 
 			if(field.type == 'resource-format-selector') {
-				field.userData.delegateColumn = metaData.form_format ? metaData.form_format : 'name';
+				field.userData.delegateColumn = metaData.search_name ? metaData.search_name : 'name';
 			}
-			
+
+		} else if (editor == 'reference-query') {
+			var refName = (field.name.indexOf('_id') > 0) ? field.name.substr(0, field.name.indexOf('_id')) : field.name;
+			field.userData = { type : metaData.col_type, refName : refName, fieldName : metaData.search_name, searchName: refName + '.' + metaData.search_name };
+
 		} else if (editor == 'number') {
 			field.userData = { type : metaData.col_type };
 
