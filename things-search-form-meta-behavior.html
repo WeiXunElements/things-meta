@@ -158,7 +158,7 @@ Things.SearchFormMetaBehavior = {
 			field.userData = { type : metaData.col_type };
 
 		} else if('date-from-to-picker' == editor) {
-			field.userData = { defaultRange : metaData.def_val };
+			field.userData = { defaultRange : metaData.def_val, format:metaData.search_name };
 		}
 	},
 
