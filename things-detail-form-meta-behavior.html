@@ -88,7 +88,8 @@ Things.DetailFormMetaBehavior = {
 		} else if(editor.indexOf('resource-selector') >= 0 || 
 							editor.indexOf('resource-format-selector') >= 0 || 
 							editor.indexOf('resource-field') >= 0 || 
-							editor.indexOf('resource-combo') >= 0) {
+							editor.indexOf('resource-combo') >= 0 ||
+							editor.indexOf('image-selector') >= 0) {
 			field.userData = {
 				resourceType : metaData.ref_type,
 				resourceName : metaData.ref_name,
@@ -112,7 +113,9 @@ Things.DetailFormMetaBehavior = {
 			if(field.type == 'resource-field') {
 				field.name = field.name.indexOf('_id') > 0 ? field.name.substr(0, field.name.indexOf('_id')) : field.name;
 			}
-
+			if(field.type == 'image-selector') {
+				field.name = field.name.indexOf('_id') > 0 ? field.name.substr(0, field.name.indexOf('_id')) : field.name;
+			}
 			if(field.type == 'resource-combo') {
 				field.userData.delegateColumn = metaData.form_format ? metaData.form_format : 'id';
 			}
