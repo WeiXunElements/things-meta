@@ -129,7 +129,6 @@ Things.DetailFormMetaBehavior = {
 
 		} else if('text' == editor) {
 			field.userData = { type : metaData.col_type };
-			if(!metaData.nullable) field.userData.required = true;
 			if(metaData.col_size && metaData.col_size > 0) field.userData.max = metaData.col_size;
 			if(metaData.form_validator) {
 				field.userData.validator = metaData.form_validator.replace('things.', 'things-validator-'); 
@@ -144,9 +143,16 @@ Things.DetailFormMetaBehavior = {
 		} else if('readonly' == editor) {
 			field.userData = { readonly: true };
 		}
-
+		
 		if(metaData.def_val) {
 			field.default = metaData.def_val;
+		}
+		
+		if(!metaData.nullable&&field.userData) {
+			field.userData.required = true
+		}else if(!metaData.nullable&&!field.userData){
+			field.userData ={};
+			field.userData.required = true
 		}
 	}
 };
