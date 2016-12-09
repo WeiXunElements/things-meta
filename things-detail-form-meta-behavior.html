@@ -144,6 +144,10 @@ Things.DetailFormMetaBehavior = {
 			field.userData = { type : metaData.col_type };
 			this._parseFormValueRange(field, metaData.range_val, 'number');
 
+		} else if('textarea' == editor) {
+			field.userData = { type : metaData.col_type };
+			if(metaData.col_size && metaData.col_size > 0) field.userData.max = metaData.col_size;
+
 		} else if('text' == editor) {
 			field.userData = { type : metaData.col_type };
 			if(metaData.col_size && metaData.col_size > 0) field.userData.max = metaData.col_size;
