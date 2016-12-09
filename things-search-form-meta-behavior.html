@@ -125,6 +125,7 @@ Things.SearchFormMetaBehavior = {
 			        editor.indexOf('resource-format-selector') >= 0 || 
 			        editor.indexOf('resource-field') >= 0 || 
 			        editor.indexOf('resource-combo') >= 0) {
+
 			field.userData = {
 				resourceType : metaData.ref_type,
 				resourceName : metaData.ref_name,
@@ -152,13 +153,15 @@ Things.SearchFormMetaBehavior = {
 
 		} else if (editor == 'reference-query') {
 			var refName = (field.name.indexOf('_id') > 0) ? field.name.substr(0, field.name.indexOf('_id')) : field.name;
-			field.userData = { type : metaData.col_type, refName : refName, fieldName : metaData.search_name, searchName: refName + '.' + metaData.search_name };
+			field.userData = { type : metaData.col_type, refName : refName, fieldName : metaData.search_name, searchName : refName + '.' + metaData.search_name };
 
 		} else if (editor == 'number') {
 			field.userData = { type : metaData.col_type };
+			this._parseSearchValueRange(field, metaData.range_val, 'number');
 
-		} else if('date-from-to-picker' == editor) {
-			field.userData = { defaultRange : metaData.def_val, format:metaData.search_name };
+		} else if('date-from-to-picker' == editor || 'ranged-date-picker' == editor) {
+			field.userData = { defaultRange : metaData.def_val, format : metaData.search_name };
+			this._parseSearchValueRange(field, metaData.range_val, 'date');
 		}
 	},
 
@@ -169,6 +172,62 @@ Things.SearchFormMetaBehavior = {
 		list.sort(function(a, b) {
 			return (a[sortField] > b[sortField]) ? 1 : ((b[sortField] > a[sortField]) ? -1 : 0);
 		});
+	},
+
+	/**
+	 * 범위 값 정보를 파싱 
+	 * 상세 폼, 그리드의 값의 범위를 제한하기 위한 필드
+	 * 예) 숫자형의 경우 : 0,100 or min:0 or max:100
+	 * 예) 날짜형의 경우 : 2016-01-01,today or min:today or max:today + 1
+	 */
+	_parseSearchValueRange: function(field, rangeVal, type) {
+		if(!rangeVal || rangeVal.length < 1) return;
+		if(type != 'number' && type != 'date') return;
+
+		field.userData = field.userData ? field.userData : {};
+		var rangeType = rangeVal.indexOf(',') > 0 ? 'min-max' : (rangeVal.indexOf('min') >= 0 ? 'min' : (rangeVal.indexOf('max') >= 0 ? 'max' : 'none'));
+		if(rangeType == 'none') return;
+		var min = null, max = null;
+
+		if(rangeType == 'min-max') {
+			min = rangeVal.split(',')[0];
+			max = rangeVal.split(',')[1];
+
+		} else if(rangeType == 'min') {
+			min = rangeVal.substr(4).trim();
+
+		} else if(rangeType == 'max') {
+			max = rangeVal.substr(4).trim();
+		}
+
+		// 날짜형인 경우 
+		if (type == 'date') {
+			min = this._calcRangeDate(min);
+			max = this._calcRangeDate(max);
+		}
+
+		if(min) field.userData.min = min;
+		if(max) field.userData.max = max;
+	},
+
+	/**
+	 * 문자형 데이터를 객체를 파싱하여 리턴한다.
+	 *
+	 * @params {String} dateStr
+	 */
+	_calcRangeDate: function(dateStr) {
+		if(!dateStr) return null;
+
+		// 1. dateStr이 today가 들어가 있다면 
+		if(dateStr.indexOf('today') >= 0) {
+			dateStr = dateStr.replace('today', 'var dt = new Date(); dt.setDate(dt.getDate()') + ')';
+			var time = eval(dateStr);
+			return new Date(time);
+
+		// 2. dateStr이 2016-10-21 처럼 날짜형이라면 ...
+		} else {
+			return new Date(dateStr);
+		}
 	}
 };
 

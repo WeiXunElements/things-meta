@@ -75,17 +75,20 @@ Things.GridMetaBehaviorImpl = {
     var gridModel = gridModelMetaList.map(function(metaData) {
       var field = { fieldName : metaData.name };
 
-      //if(['integer', 'int', 'long', 'double', 'float'].includes(metaData.col_type)) {
       if(metaData.col_type == 'integer' || metaData.col_type == 'int' || metaData.col_type == 'long' || metaData.col_type == 'double' || metaData.col_type == 'float') {
         field.dataType = 'number';
 
-      //} else if(['date', 'time'].includes(metaData.col_type)) {
-      } else if(metaData.col_type == 'date' || metaData.col_type == 'date') {
+      } else if(metaData.col_type == 'date' || metaData.col_type == 'time') {
         field.dataType = 'datetime';
         field.datetimeFormat = metaData.grid_format? metaData.grid_format : 'yyyy-MM-dd';
       }
 
       var editor = metaData.grid_editor;
+
+      if(editor == 'rank') {
+          field.rank = true;
+          field.increment = metaData.grid_format ? Number(metaData.grid_format) : 1;
+      }
 
       if(editor && editor.indexOf('resource-column') >= 0) {
         field.fieldName = field.fieldName.substr(0, field.fieldName.indexOf('_id'));
@@ -153,8 +156,8 @@ Things.GridMetaBehaviorImpl = {
 
       // align 정보가 있으면 설정
       if(metaData.grid_align) field.styles.textAlignment = metaData.grid_align;
-
       var editor = metaData.grid_editor;
+      
       if(editor) {
         if(('code-combo' == editor) && metaData.code_list && metaData.code_list.length > 0) {
           field.editor = { type: 'list', domainOnly: true };
@@ -168,15 +171,26 @@ Things.GridMetaBehaviorImpl = {
           field.editable = false;
           field.renderer = { type: 'check', editable: true, threeStates: false, trueValues: 'true', falseValues: 'false' };
 
+        } else if(editor == 'rank') {
+          field.editor = { type: 'number', minValue: 0 };
+
+        } else if(editor == 'positive-number') {
+          field.editor = { type: 'number', minValue: 0 };
+          field.styles.numberFormat = metaData.grid_format ? metaData.grid_format : '0,000';
+
+        } else if(editor == 'negative-number') {
+          field.editor = { type: 'number', maxValue: 0 };
+          field.styles.numberFormat = metaData.grid_format ? metaData.grid_format : '0,000';
+
         } else if(editor == 'number') {
           field.editor = { type: 'number' };
           field.styles.numberFormat = metaData.grid_format ? metaData.grid_format : '0,000';
+          var minMax = me._parseGridValueRange(metaData.range_val, 'number');
 
-        } else if(editor == 'date-picker' || editor == 'time-picker') {
-          field.editable = false;
-          field.styles.iconIndex = 'date-picker';
-          field.styles.datetimeFormat = metaData.grid_format ? metaData.grid_format : 'yyyy-MM-dd';
-          field.styles.textAlignment = 'center';
+          if(minMax && minMax.length == 2) {
+            if(minMax[0]) field.editor.minValue = Number(minMax[0]);
+            if(minMax[1]) field.editor.maxValue = Number(minMax[1]);
+          }
 
         } else if(editor.indexOf('resource-column') >= 0) {
           me._newResourceColumn(metaData, field);
@@ -211,12 +225,31 @@ Things.GridMetaBehaviorImpl = {
           field.editor = { type: 'mask', mask: '0000-00-00', datetimeFormat: 'yyyy-MM-dd' };
 
         } else if (editor == 'time') {
-          field.styles = { datetimeFormat: 'hh:mm:ss'};
+          field.styles = { datetimeFormat: 'hh:mm:ss' };
           field.editor = { type: 'mask', mask: '00:00:00', datetimeFormat: 'hh:mm:ss' };
 
         } else if (editor == 'datetime') {
           field.styles = { datetimeFormat: 'yyyy-MM-dd hh:mm:ss' };
           field.editor = { type: 'mask', mask: '0000-00-00 00:00:00', datetimeFormat: 'yyyy-MM-dd hh:mm:ss', includeLiterals: true };
+
+        } else if(editor == 'ranged-date-picker') {
+          field.editable = false;
+          field.styles.iconIndex = 'date-picker';
+          field.styles.datetimeFormat = metaData.grid_format ? metaData.grid_format : 'yyyy-MM-dd';
+          field.styles.textAlignment = 'center';
+          var minMax = me._parseGridValueRange(metaData.range_val, 'date');
+          
+          if(minMax && minMax.length == 2) {
+            field.userData = field.userData ? field.userData : {};
+            if(minMax[0]) field.userData.minDate = minMax[0];
+            if(minMax[1]) field.userData.maxDate = minMax[1];
+          }
+
+        } else if(editor == 'date-picker') {
+          field.editable = false;
+          field.styles.iconIndex = 'date-picker';
+          field.styles.datetimeFormat = metaData.grid_format ? metaData.grid_format : 'yyyy-MM-dd';
+          field.styles.textAlignment = 'center';
 
         } else if (editor.indexOf('image-selector') >= 0) {
           field.editable = false;
@@ -292,9 +325,11 @@ Things.GridMetaBehaviorImpl = {
       var userData = index.column.userData();
       var columnObj = rowObj[fieldName];
       var retVal = columnObj ? columnObj[userData.titleField] : '';
+
       if(columnObj && columnObj.description) {
         retVal = retVal + ' (' + columnObj.description + ')';
       }
+
       return retVal;
     };
 
@@ -306,6 +341,60 @@ Things.GridMetaBehaviorImpl = {
     // 3. Text 형식으로 전달된 클립보드 데이터를 전달받아 Paste Logic 수행 
     field.pasteCallback = function (row, field, text) {
       return text ? JSON.parse(text) : text;
+    }
+  },
+
+  /**
+   * 범위 값 정보를 파싱 
+   * 상세 폼, 그리드의 값의 범위를 제한하기 위한 필드
+   * 예) 숫자형의 경우 : 0,100 or min:0 or max:100
+   * 예) 날짜형의 경우 : 2016-01-01,today or min:today or max:today + 1
+   */
+  _parseGridValueRange: function(rangeVal, type) {
+    if(!rangeVal || rangeVal.length < 1) return null;
+    if(type != 'number' && type != 'date') return null;
+
+    var rangeType = rangeVal.indexOf(',') > 0 ? 'min-max' : (rangeVal.indexOf('min') >= 0 ? 'min' : (rangeVal.indexOf('max') >= 0 ? 'max' : 'none'));
+    if(rangeType == 'none') return null;
+    var min = null, max = null;
+
+    if(rangeType == 'min-max') {
+      min = rangeVal.split(',')[0];
+      max = rangeVal.split(',')[1];
+
+    } else if(rangeType == 'min') {
+      min = rangeVal.substr(4).trim();
+
+    } else if(rangeType == 'max') {
+      max = rangeVal.substr(4).trim();
+    }
+
+    // 날짜형인 경우 
+    if (type == 'date') {
+      min = this._calcGridRangeDate(min);
+      max = this._calcGridRangeDate(max);
+    }
+
+    return [min, max];
+  },
+
+  /**
+   * 문자형 데이터를 객체를 파싱하여 리턴한다.
+   *
+   * @params {String} dateStr
+   */
+  _calcGridRangeDate: function(dateStr) {
+    if(!dateStr) return null;
+
+    // 1. dateStr이 today가 들어가 있다면 
+    if(dateStr.indexOf('today') >= 0) {
+      dateStr = dateStr.replace('today', 'var dt = new Date(); dt.setDate(dt.getDate()') + ')';
+      var time = eval(dateStr);
+      return new Date(time);
+
+    // 2. dateStr이 2016-10-21 처럼 날짜형이라면 ...
+    } else {
+      return new Date(dateStr);
     }
   },
 
@@ -323,4 +412,5 @@ Things.GridMetaBehavior = [
   Things.GridMetaBehaviorImpl,
   Things.GlobalBehavior
 ];
+
 </script>

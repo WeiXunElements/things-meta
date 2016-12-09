@@ -29,6 +29,10 @@ Things.DetailFormMetaBehavior = {
 				return [];
 			}
 		},
+
+		/**
+		 * Tab Index
+		 */
 		_tabindex: {
 			type: Number,
 			value: 1
@@ -43,20 +47,22 @@ Things.DetailFormMetaBehavior = {
 	 */
 	_parseResourceFormFields: function(metaDataList) {
 		var me = this;
+
 		return metaDataList.map(function(metaData) {
 			var field = { 
 				name : metaData.name, 
 				label : Things.DataGlobal.tt(metaData.term),
 				type : metaData.form_editor
 			};
-			field.tabIndex = me.setTabindex(metaData.form_editor,metaData);
 
+			field.tabIndex = me.setTabindex(metaData.form_editor, metaData);
 			if(metaData.ignore_on_save) me.ignoreFieldsOnSave.push(metaData.name);
 			if(!metaData.form_editor) metaData.form_editor = 'text';
 			me._parseResourceFormField(field, metaData, true);
 			return field;
 		});		
 	},
+
 	/**
 	 * text/number/password/textarea/code-combo/resource-combo에는 tabindex를 주고 
 	 * 남은 에디터는 tabIndex를 주지 않는다.
@@ -64,14 +70,19 @@ Things.DetailFormMetaBehavior = {
 	 * @param {[type]} editorType [description]
 	 * @param {[type]} metaData   [description]
 	 */
-	setTabindex : function(editorType,metaData){
-		if(editorType =='text'||editorType =='number'||editorType =='password'||
-		   editorType =='textarea'||editorType=='code-combo'||editorType =='resource-combo'){
-			return this._tabindex++
-		}else{
+	setTabindex : function(editorType ,metaData) {
+		if(editorType == 'text' || 
+			 editorType == 'number' || 
+			 editorType == 'password' ||
+		   editorType == 'textarea' || 
+		   editorType == 'code-combo' || 
+		   editorType == 'resource-combo') {
+			return this._tabindex++;
+		} else {
 			return -1
 		}
 	},
+	
 	/**
 	 * form field를 파싱한다.
 	 *
@@ -90,6 +101,7 @@ Things.DetailFormMetaBehavior = {
 							editor.indexOf('resource-field') >= 0 || 
 							editor.indexOf('resource-combo') >= 0 ||
 							editor.indexOf('image-selector') >= 0) {
+
 			field.userData = {
 				resourceType : metaData.ref_type,
 				resourceName : metaData.ref_name,
@@ -110,12 +122,10 @@ Things.DetailFormMetaBehavior = {
 				field.type = 'resource-field';
 			}
 
-			if(field.type == 'resource-field') {
+			if(field.type == 'resource-field' || field.type == 'image-selector') {
 				field.name = field.name.indexOf('_id') > 0 ? field.name.substr(0, field.name.indexOf('_id')) : field.name;
 			}
-			if(field.type == 'image-selector') {
-				field.name = field.name.indexOf('_id') > 0 ? field.name.substr(0, field.name.indexOf('_id')) : field.name;
-			}
+
 			if(field.type == 'resource-combo') {
 				field.userData.delegateColumn = metaData.form_format ? metaData.form_format : 'id';
 			}
@@ -123,19 +133,25 @@ Things.DetailFormMetaBehavior = {
 			if(field.type == 'resource-format-selector') {
 				field.userData.delegateColumn = metaData.form_format ? metaData.form_format : 'name';
 			}
-			
+
+		} else if ('positive-number' == editor) {
+			field.userData = { type : 'number', min : 0 };
+
+		} else if ('negative-number' == editor) {
+			field.userData = { type : 'number', max : 0 };
+
 		} else if ('number' == editor) {
 			field.userData = { type : metaData.col_type };
+			this._parseFormValueRange(field, metaData.range_val, 'number');
 
 		} else if('text' == editor) {
 			field.userData = { type : metaData.col_type };
 			if(metaData.col_size && metaData.col_size > 0) field.userData.max = metaData.col_size;
-			if(metaData.form_validator) {
-				field.userData.validator = metaData.form_validator.replace('things.', 'things-validator-'); 
-			}
+			if(metaData.form_validator) field.userData.validator = metaData.form_validator.replace('things.', 'things-validator-');
 
-		} else if('date-from-to-picker' == editor) {
+		} else if('date-from-to-picker' == editor || 'ranged-date-picker' == editor) {
 			field.userData = { defaultRange : metaData.def_val };
+			this._parseFormValueRange(field, metaData.range_val, 'date');
 
 		} else if('hidden' == editor) {
 			field.userData = { hidden: true };
@@ -148,11 +164,65 @@ Things.DetailFormMetaBehavior = {
 			field.default = metaData.def_val;
 		}
 		
-		if(!metaData.nullable&&field.userData) {
-			field.userData.required = true
-		}else if(!metaData.nullable&&!field.userData){
-			field.userData ={};
-			field.userData.required = true
+		if(typeof metaData.nullable != 'undefined' && metaData.nullable == false) {
+			field.userData = field.userData ? field.userData : {};
+			field.userData.required = true;
+		}
+	},
+
+	/**
+	 * 범위 값 정보를 파싱 
+	 * 상세 폼, 그리드의 값의 범위를 제한하기 위한 필드
+	 * 예) 숫자형의 경우 : 0,100 or min:0 or max:100
+	 * 예) 날짜형의 경우 : 2016-01-01,today or min:today or max:today + 1
+	 */
+	_parseFormValueRange: function(field, rangeVal, type) {
+		if(!rangeVal || rangeVal.length < 1) return;
+		if(type != 'number' && type != 'date') return;
+
+		field.userData = field.userData ? field.userData : {};
+		var rangeType = rangeVal.indexOf(',') > 0 ? 'min-max' : (rangeVal.indexOf('min') >= 0 ? 'min' : (rangeVal.indexOf('max') >= 0 ? 'max' : 'none'));
+		if(rangeType == 'none') return;
+		var min = null, max = null;
+
+		if(rangeType == 'min-max') {
+			min = rangeVal.split(',')[0];
+			max = rangeVal.split(',')[1];
+
+		} else if(rangeType == 'min') {
+			min = rangeVal.substr(4).trim();
+
+		} else if(rangeType == 'max') {
+			max = rangeVal.substr(4).trim();
+		}
+
+		// 날짜형인 경우 
+		if (type == 'date') {
+			min = this._calcDate(min);
+			max = this._calcDate(max);
+		}
+
+		if(min) field.userData.min = min;
+		if(max) field.userData.max = max;
+	},
+
+	/**
+	 * 문자형 데이터를 객체를 파싱하여 리턴한다.
+	 *
+	 * @params {String} dateStr
+	 */
+	_calcDate: function(dateStr) {
+		if(!dateStr) return null;
+
+		// 1. dateStr이 today가 들어가 있다면 
+		if(dateStr.indexOf('today') >= 0) {
+			dateStr = dateStr.replace('today', 'var dt = new Date(); dt.setDate(dt.getDate()') + ')';
+			var time = eval(dateStr);
+			return new Date(time);
+
+		// 2. dateStr이 2016-10-21 처럼 날짜형이라면 ...
+		} else {
+			return new Date(dateStr);
 		}
 	}
 };
