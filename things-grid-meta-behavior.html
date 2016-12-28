@@ -197,11 +197,13 @@ Things.GridMetaBehaviorImpl = {
           field.editable = false;
 
         } else if(editor.indexOf('resource-selector') >= 0) {
+          var originalField = field.name;
           me._newResourceColumn(metaData, field);
           field.button = 'action';
           field.buttonVisibility = 'always';          
           field.editable = false;
           field.styles.iconIndex = 'resource-selector';
+          field.userData.originalField = originalField;
           field.userData.resourceType = metaData.ref_type;
           field.userData.resourceName = metaData.ref_name;
           field.userData.initialParams = metaData.ref_params;
