@@ -103,7 +103,9 @@ Things.SearchFormMetaBehavior = {
 			};
 			
 			if(!metaData.search_editor) metaData.search_editor = 'text';
-			if(metaData.search_editor) me._parseSearchFormField(field, metaData, false)
+			if(metaData.search_editor) me._parseSearchFormField(field, metaData, false);
+			if(metaData.def_val) field.default = metaData.def_val;
+			
 			return field;
 		});
 	},
