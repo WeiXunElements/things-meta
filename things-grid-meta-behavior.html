@@ -261,7 +261,7 @@ Things.GridMetaBehaviorImpl = {
           field.editable = false;
           field.styles.iconIndex = 'image-renderer';
           field.type = 'calced';
-          field.renderer = { type: 'image', imageDisplay: DataLudi.ImageDisplay.NORMAL };
+          field.renderer = { type: 'image', imageDisplay: 'auto' };
           
           var baseUrl = me.globals.baseUrl;
           field.valueCallback = function(column, row) {
