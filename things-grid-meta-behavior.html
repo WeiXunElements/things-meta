@@ -110,7 +110,7 @@ Things.GridMetaBehaviorImpl = {
         field.defaultValue = (field.dataType == 'number') ? Number(metaData.def_val) : metaData.def_val;
       }
 
-      if(!field.virtual_field || field.virtual_field == false) {
+      if(!metaData.virtual_field || metaData.virtual_field == false) {
         selectColumns += field.fieldName + ',';  
       }
       
