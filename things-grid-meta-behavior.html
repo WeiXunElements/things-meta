@@ -159,13 +159,14 @@ Things.GridMetaBehaviorImpl = {
       var editor = metaData.grid_editor;
       
       if(editor) {
-        if(('code-combo' == editor) && metaData.code_list && metaData.code_list.length > 0) {
+        if(('code-combo' == editor || 'code-column' == editor) && metaData.code_list && metaData.code_list.length > 0) {
           field.editor = { type: 'list', domainOnly: true };
           field.lookupDisplay = true;
           field.lookupValues = metaData.code_list.map(function(code) { return code.name });
           field.lookupValues.unshift('');
           field.lookupLabels = metaData.code_list.map(function(code) { return code.description });
           field.lookupLabels.unshift('');
+          if(editor == 'code-column') field.editable = false;
 
         } else if(editor == 'checkbox') {
           field.editable = false;
