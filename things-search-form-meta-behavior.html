@@ -44,7 +44,7 @@ Things.SearchFormMetaBehavior = {
 	 */
 	_parseSelectFields: function(metaDataList) {
 		var listMetaList = metaDataList.filter(function(metaData) { 
-			return (metaData.name == 'id' || (metaData.grid_rank && metaData.grid_rank > 0));
+			return (metaData.name == 'id' || (metaData.grid_rank && metaData.grid_rank > 0 && (!metaData.virtual_field || metaData.virtual_field == false)));
 		});
 
 		var selectColumns = listMetaList.map(function(metaData) { 

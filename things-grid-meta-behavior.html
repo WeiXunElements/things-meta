@@ -110,16 +110,15 @@ Things.GridMetaBehaviorImpl = {
         field.defaultValue = (field.dataType == 'number') ? Number(metaData.def_val) : metaData.def_val;
       }
 
-      if(selectColumns.length > 2) {
-        this.selectFields = selectColumns.substr(0, selectColumns.length - 1);  
+      if(!field.virtual_field || field.virtual_field == false) {
+        selectColumns += field.fieldName + ',';  
       }
-
-      selectColumns += field.fieldName + ',';
+      
       return field;
     });
 
     if(selectColumns.length > 2) {
-      this.selectFields = selectColumns.substr(0, selectColumns.length - 1);  
+      this.selectFields = selectColumns.substr(0, selectColumns.length - 1);
     }
 
     return gridModel;
