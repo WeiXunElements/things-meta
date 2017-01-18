@@ -135,13 +135,22 @@ Things.DetailFormMetaBehavior = {
 			}
 
 		} else if ('positive-number' == editor) {
-			field.userData = { type : 'number', min : 0 };
+			field.userData = { type : 'number', min : 0};
+			if(metaData.form_format){
+				field.userData.format = metaData.form_format;
+			}
 
 		} else if ('negative-number' == editor) {
 			field.userData = { type : 'number', max : 0 };
+			if(metaData.form_format){
+				field.userData.format = metaData.form_format;
+			}
 
 		} else if ('number' == editor) {
 			field.userData = { type : metaData.col_type };
+			if(metaData.form_format){
+				field.userData.format = metaData.form_format;
+			}
 			this._parseFormValueRange(field, metaData.range_val, 'number');
 
 		} else if('textarea' == editor) {
