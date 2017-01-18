@@ -170,7 +170,7 @@ Things.DetailFormMetaBehavior = {
 			field.userData = { hidden: true };
 			
 		} else if('readonly' == editor) {
-			field.userData = { readonly: true };
+			field.userData = { type: metaData.col_type, readonly: true};
 		}
 		
 		if(metaData.def_val) {
