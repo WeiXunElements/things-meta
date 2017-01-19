@@ -98,6 +98,7 @@ Things.DetailFormMetaBehavior = {
 
 		} else if(editor.indexOf('resource-selector') >= 0 || 
 							editor.indexOf('resource-format-selector') >= 0 || 
+							editor.indexOf('view-field') >= 0 || 
 							editor.indexOf('resource-field') >= 0 || 
 							editor.indexOf('resource-combo') >= 0 ||
 							editor.indexOf('image-selector') >= 0) {
@@ -118,11 +119,11 @@ Things.DetailFormMetaBehavior = {
 				field.type = editor;
 			}
 
-			if(resourceForm && field.type == 'resource-selector') {
+			if(resourceForm && (field.type == 'resource-selector')) {
 				field.type = 'resource-field';
 			}
 
-			if(field.type == 'resource-field' || field.type == 'image-selector') {
+			if(field.type == 'resource-field' || field.type == 'image-selector'||field.type=='view-field') {
 				field.name = field.name.indexOf('_id') > 0 ? field.name.substr(0, field.name.indexOf('_id')) : field.name;
 			}
 
@@ -170,6 +171,13 @@ Things.DetailFormMetaBehavior = {
 			field.userData = { hidden: true };
 			
 		} else if('readonly' == editor) {
+			if(metaData.ref_type){
+				if(metaData.ref_type=='CommonCode'){
+					editor ='code-combo'
+					field.type ='code-combo'
+					field.codeName = metaData.ref_name;
+				}
+			}
 			field.userData = { type: metaData.col_type, readonly: true};
 		}
 		
