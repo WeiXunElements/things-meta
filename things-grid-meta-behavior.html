@@ -296,9 +296,11 @@ Things.GridMetaBehaviorImpl = {
         } else if (editor == 'password') {
           field.displayCallback = function(index, value) {
             var hiddenString = '';
-
-            for(var i = 0; i < value.length; i++) {
-              hiddenString += '*';
+            
+            if(value) {
+              for(var i = 0; i < value.length; i++) {
+                hiddenString += '*';
+              }
             }
 
             return hiddenString;
