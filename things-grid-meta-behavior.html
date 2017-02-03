@@ -293,6 +293,16 @@ Things.GridMetaBehaviorImpl = {
             }
           }
 
+        } else if (editor == 'password') {
+          field.displayCallback = function(index, value) {
+            var hiddenString = '';
+
+            for(var i = 0; i < value.length; i++) {
+              hiddenString += '*';
+            }
+
+            return hiddenString;
+          };
         } else {
           if(metaData.col_size && metaData.col_size > 0 && metaData.col_type == 'string') {
             field.editor = { maxLength : metaData.col_size };
