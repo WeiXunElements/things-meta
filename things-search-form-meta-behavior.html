@@ -48,7 +48,7 @@ Things.SearchFormMetaBehavior = {
 		});
 
 		var selectColumns = listMetaList.map(function(metaData) { 
-			if(metaData.grid_editor && (metaData.grid_editor.indexOf('resource-selector') >= 0 || metaData.grid_editor.indexOf('resource-column') >= 0)) {
+			if(metaData.grid_editor && (metaData.grid_editor.indexOf('resource-selector') >= 0 || metaData.grid_editor.indexOf('resource-column') >= 0 || metaData.grid_editor.indexOf('file-selector') >= 0)) {
 				return metaData.name.substr(0, metaData.name.indexOf('_id'));
 			} else {
 				return metaData.name; 
