@@ -96,6 +96,7 @@ Things.GridMetaBehaviorImpl = {
       }
 
       if(editor && editor.indexOf('resource-selector') >= 0) {
+        field.fieldName = field.fieldName.substr(0, field.fieldName.indexOf('_id'));
         field.dataType = 'object';
       }
 
