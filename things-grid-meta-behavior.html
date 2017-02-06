@@ -96,7 +96,6 @@ Things.GridMetaBehaviorImpl = {
       }
 
       if(editor && editor.indexOf('resource-selector') >= 0) {
-        field.fieldName = field.fieldName.substr(0, field.fieldName.indexOf('_id'));
         field.dataType = 'object';
       }
 
@@ -104,6 +103,11 @@ Things.GridMetaBehaviorImpl = {
         if(field.fieldName.indexOf('_id') >= 0) {
           field.fieldName = field.fieldName.substr(0, field.fieldName.indexOf('_id'));
         }
+      }
+
+      if(editor && editor.indexOf('file-selector') >= 0) {
+        field.fieldName = field.fieldName.substr(0, field.fieldName.indexOf('_id'));
+        field.dataType = 'object';
       }
 
       if(field.dataType != 'object' && metaData.def_val) {
@@ -257,6 +261,13 @@ Things.GridMetaBehaviorImpl = {
           field.editable = false;
           field.styles.iconIndex = 'image-selector';
 
+        } else if (editor.indexOf('file-selector') >= 0) {
+          field.editable = false;
+          field.styles.iconIndex = 'file-selector';
+          me._newResourceColumn(metaData, field);
+          field.userData.defaultStorage = metaData.grid_format;
+          field.userData.titleField = 'name';
+          
         } else if (editor.indexOf('image-renderer') >= 0) {
           field.editable = false;
           field.styles.iconIndex = 'image-renderer';
