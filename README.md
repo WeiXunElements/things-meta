@@ -33,16 +33,16 @@ Example:
 Example:
 
 ```html
-        <things-menu-meta 
-      id="resourceMeta" 
-          menu-id="5" 
-          sort-fields = "{{sortFields}}"
-          select-fields="{{selectFields}}"
-          search-form-fields ="{{searchFormFields}}"
-          resource-form-fields ="{{resourceFormFields}}"
-          grid-model ="{{gridModel}}"
-          grid-columns ="{{gridColumns}}">
-        </things-menu-meta>
+    <things-menu-meta 
+        id="resourceMeta" 
+        menu-id="5" 
+        sort-fields = "{{sortFields}}"
+        select-fields="{{selectFields}}"
+        search-form-fields ="{{searchFormFields}}"
+        resource-form-fields ="{{resourceFormFields}}"
+        grid-model ="{{gridModel}}"
+        grid-columns ="{{gridColumns}}">
+    </things-menu-meta>
 ```
 
 ## Dependencies
