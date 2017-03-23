@@ -3,8 +3,15 @@
 <link rel="import" href="things-menu-detail-meta-behavior.html">
 <link rel="import" href="../things-ajax/things-ajax.html">
 
-<!-- 
- 	메뉴 정보를 받아서 메뉴 메타데이터를 조회하기 위한 resource 
+<!--
+## Menu Detail 기반의 상세 화면 구성을 위한 데이터를 셋업하기 위한 메타 정보용 컴포넌트.
+
+Menu Detail 기반의 상세 화면은 마스터 : 디테일 = 1 : 1인 경우 마스터 폼 화면과 디테일 폼 화면.<br/>
+마스터 : 디테일 = 1 : 1인 경우 마스터 폼 화면과 디테일 그리드 화면으로 구성된다. <br/>
+이에 Master Form : Detail Form 혹은 Master Form : Detail Grid 화면 혹은 Master Form에 대한 설정을 하지 않고
+Detail 화면에 대한 구성만 했다면 Detail Form 혹은 Detail Grid화면으로 구성되는데 이 화면을 구성하는데 필요한 메타 정보를 제공한다.
+
+@demo demo/index.html
 -->
 
 <dom-module id="things-menu-detail-meta">

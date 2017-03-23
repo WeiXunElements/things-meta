@@ -5,8 +5,9 @@
 window.Things = window.Things || {};
 
 /**
- * 구성하고자 하는 리소스 화면 구성을 위해 모델 정보를 제공하는 Behavior
- * 리소스의 메타 데이터를 조회하는 URL 구성과 메타 데이터를 받은 후 검색 폼, 그리드, 디테일 폼에 필요한 모델 정보를 제공한다.
+ * ## 기본 화면 구성을 위해 상세 폼 관련 메타 정보를 제공하는 Behavior
+ * 상세 폼 구성에 필요한 모델 정보를 제공한다.<br/>
+ * 서버로 부터 받아온 메타 정보를 상세 폼 구성을 위한 구체적인 정보로 변환하여 상세 폼 구성시 필요한 폼 메타 데이터를 제공한다.
  *
  * @polymerBehavior Things.DetailFormMetaBehavior
  */
@@ -14,14 +15,14 @@ Things.DetailFormMetaBehavior = {
 
 	properties: {
 		/**
-		 * Resource form fields
+		 * 기본 상세 폼 필드 정보 
 		 */
 		resourceFormFields: {
 			type: Array
 		},
 
 		/**
-		 * Resource form 저장 시점에 서버에 전달되지 않기를 원하는 필드 리스트
+		 * 기본 상세 폼 저장 시점에 서버에 전달되지 않기를 원하는 필드 리스트
 		 */
 		ignoreFieldsOnSave: {
 			type: Array,
@@ -31,7 +32,9 @@ Things.DetailFormMetaBehavior = {
 		},
 
 		/**
-		 * Tab Index
+		 * 상세 폼에서 Tab 키를 눌렀을 경우 첫번째 컴포넌트에서 다음 컴포넌트로 포커스가 이동되는데 <br/>
+		 * 이 때 상세 폼 내의 TabIndex 값에 따라 이동하게 된다.  <br/>
+		 * 메타 정보로 부터 상세 폼 내에 추가될 컴포넌트들을 생성하면서 생성된 컴포넌트에 Tab Index를 부여하게 되는데 이를 관리하기 위한 Tab Index 변수
 		 */
 		_tabindex: {
 			type: Number,
@@ -40,10 +43,10 @@ Things.DetailFormMetaBehavior = {
 	},
 
 	/**
-	 * meta data로 부터 resourceFormFields로 파싱한다.
+	 * 서버 측 폼 메타 데이터로 부터 클라이언트 측 폼 구성을 위한 메타 데이터로 변환한다.
 	 *
-	 * @param {Array} metaDataList
-	 * @return {Array} resourceFormFields
+	 * @param {Array} metaDataList 서버 측 메타데이터 리스트 
+	 * @return {Array} resourceFormFields 클라이언트 측 폼 구성을 위한 메타 데이터
 	 */
 	_parseResourceFormFields: function(metaDataList) {
 		var me = this;
@@ -55,22 +58,29 @@ Things.DetailFormMetaBehavior = {
 				type : metaData.form_editor
 			};
 
-			field.tabIndex = me.setTabindex(metaData.form_editor, metaData);
-			if(metaData.ignore_on_save) me.ignoreFieldsOnSave.push(metaData.name);
-			if(!metaData.form_editor) metaData.form_editor = 'text';
+			field.tabIndex = me.setTabindex(metaData.form_editor);
+
+			if(metaData.ignore_on_save) {
+				me.ignoreFieldsOnSave.push(metaData.name);
+			}
+
+			if(!metaData.form_editor) {
+				metaData.form_editor = 'text';
+			}
+
 			me._parseResourceFormField(field, metaData, true);
 			return field;
 		});		
 	},
 
 	/**
-	 * text/number/password/textarea/code-combo/resource-combo에는 tabindex를 주고 
-	 * 남은 에디터는 tabIndex를 주지 않는다.
 	 * 
-	 * @param {[type]} editorType [description]
-	 * @param {[type]} metaData   [description]
+	 * 탭 인덱스 정보를 설정한다. <br/>
+	 * text/number/password/textarea/code-combo/resource-combo에는 tabindex를 할당하고 남은 에디터는 tabIndex를 할당하지 않는다.
+	 * 
+	 * @param {String} editorType 편집기 유형 
 	 */
-	setTabindex : function(editorType ,metaData) {
+	setTabindex : function(editorType) {
 		if(editorType == 'text' || 
 			 editorType == 'number' || 
 			 editorType == 'password' ||
@@ -84,10 +94,10 @@ Things.DetailFormMetaBehavior = {
 	},
 	
 	/**
-	 * form field를 파싱한다.
+	 * 서버 측 폼 필드 정보를 파싱하여 클라이언트 측 폼을 구성하는데 필요한 데이터로 변환한다.
 	 *
-	 * @param {Object} field
-	 * @param {Object} metaData
+	 * @param {Object} field 클라이언트 상세 폼에 대한 필드 정보 
+	 * @param {Object} metaData 서버 측 폼 필드 메타 정보 
 	 * @param {Boolean} resourceForm resourceForm인지 아닌지 여부 
 	 */
 	_parseResourceFormField: function(field, metaData, resourceForm) {
@@ -196,6 +206,10 @@ Things.DetailFormMetaBehavior = {
 	 * 상세 폼, 그리드의 값의 범위를 제한하기 위한 필드
 	 * 예) 숫자형의 경우 : 0,100 or min:0 or max:100
 	 * 예) 날짜형의 경우 : 2016-01-01,today or min:today or max:today + 1
+   *
+   * @param {String} field 필드 메타 정보 
+   * @param {String} rangeVal 범위값 
+   * @param {String} type 범위값의 타입 
 	 */
 	_parseFormValueRange: function(field, rangeVal, type) {
 		if(!rangeVal || rangeVal.length < 1) return;
@@ -228,9 +242,10 @@ Things.DetailFormMetaBehavior = {
 	},
 
 	/**
-	 * 문자형 데이터를 객체를 파싱하여 리턴한다.
+	 * 문자형 데이터를 Date 객체로 파싱하여 리턴한다.
 	 *
-	 * @params {String} dateStr
+	 * @params {String} dateStr 문자로 된 날짜 데이터 
+	 * @return {Date} dateStr을 파싱한 Date 객체 
 	 */
 	_calcDate: function(dateStr) {
 		if(!dateStr) return null;

@@ -9,8 +9,8 @@
 window.Things = window.Things || {};
 
 /**
- * 구성하고자 하는 메뉴 화면 구성을 위해 메타 데이터를 조회하여 모델 정보를 제공하는 Behavior
- * 화면의 메타 데이터를 조회하는 URL 구성과 메타 데이터를 받은 후 검색 폼, 그리드, 디테일 폼에 필요한 모델 정보를 제공한다.
+ * ## Menu 기반의 화면 구성을 위한 메타 정보를 제공하는 Behavior
+ * Menu 메타 데이터를 조회하는 URL 구성과 메타 데이터를 받은 후 검색 폼, 그리드, 디테일 폼에 필요한 모델 정보를 제공한다.
  *
  * @polymerBehavior Things.MenuMetaBehavior
  */
@@ -33,28 +33,35 @@ Things.MenuMetaBehaviorImpl = {
 		},		
 
 		/**
-		 * Menu meta data - searchFromFields, resourceFormFields, gridModel, gridColumns, selectFields, sortFields, buttons 등을 파싱한다. 
+		 * 서버로 부터 조회한 Menu의 메타 데이터 <br/>
+		 * 서버로 부터 응답받은 메타 정보를 파싱하여 Menu 기반의 화면구성에 필요한 searchFromFields, resourceFormFields, gridModel, gridColumns, selectFields, sortFields 데이터를 설정한다.
 		 */
 		metaData: {
 			type: Array,
 			observer: 'parseMetaData'
 		}
+
+    /**
+     * 서버로 부터 응답받은 메타 정보를 파싱하여 Menu 기반의 화면 구성을 위해 필요한 데이터가 모두 설정되었다 (즉 Menu 기반의 화면 구성에 필요한 메타 데이터가 모두 설정이 완료되었다)는 이벤트 
+     *
+     * @event things-menu-meta-configured
+     */
 	},
 
 	/**
-	 * menuId로 부터 Menu Meta URL을 생성
+	 * menuId로 부터 Menu Meta 조회를 위한 URL을 생성
 	 *
-	 * @param {String} menuId
-	 * @return {String} Get Menu Meta URL
+	 * @param {String} Menu ID
+	 * @return {String} Menu Meta 조회를 위한 URL
 	 */
 	_computeMenuMetaUrl: function(menuId) {
 		return 'menus/' + menuId + '/menu_meta';
 	},
 
 	/**
-	 * meta data를 파싱한다.
+	 * 서버로 부터 응답받은 메타 정보를 파싱하여 Menu 기반의 화면 구성을 위해 필요한 데이터로 변환한다.
 	 *
-	 * @param {Array} metaData
+	 * @param {Object} metaData 서버로 부터 응답받은 메타 정보
 	 */
 	parseMetaData: function(metaData) {
 		if(!metaData || metaData.length == 0) return;
@@ -73,6 +80,8 @@ Things.MenuMetaBehaviorImpl = {
 		this.gridModel = this._parseGridModel(metaData.columns);
 		// 7. Parse Grid Columns - grid form
 		this.gridColumns = this._parseGridColumns(metaData.columns);
+
+		this.fire('things-menu-meta-configured', null);
 	}	
 
 };

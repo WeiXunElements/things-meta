@@ -9,8 +9,8 @@
 window.Things = window.Things || {};
 
 /**
- * 구성하고자 하는 리소스 화면 구성을 위해 모델 정보를 제공하는 Behavior
- * 리소스의 메타 데이터를 조회하는 URL 구성과 메타 데이터를 받은 후 검색 폼, 그리드, 디테일 폼에 필요한 모델 정보를 제공한다.
+ * ## Entity 기반의 ResourceSelector화면 구성을 위한 메타 정보를 제공하는 Behavior
+ * Entity 메타 데이터를 조회하는 URL 구성과 메타 데이터를 받은 후 검색 폼, 그리드, 디테일 폼에 필요한 모델 정보를 제공한다.
  *
  * @polymerBehavior Things.EntityMetaBehavior
  */
@@ -26,14 +26,15 @@ Things.EntityMetaBehaviorImpl = {
 		},
 
 		/**
-		 * resource 대표 url
+		 * Entity 조회를 위한 대표 URL
 		 */
 		resourceUrl: {
 			type: String
 		},
 
 		/**
-		 * view 구성을 위해 필요한 메타 데이터를 조회하기 위한 URL
+		 * 화면 구성을 위해 필요한 메타 데이터를 조회하기 위한 URL <br/>
+		 * resourceName 즉 Entity 명이 결정되면 이 URL도 결정이 된다.
 		 */
 		entityMetaUrl: {
 			type: String,
@@ -41,26 +42,32 @@ Things.EntityMetaBehaviorImpl = {
 		},
 
 		/**
-		 * 메타 데이터로 부터 조회한 Entity Object
+		 * 서버로 부터 조회한 Entity Object
 		 */
 		entity: {
 			type: Object
 		},
 
 		/**
-		 * resource meta data
-		 * resource metaData로 searchFromFields, resourceFormFields, gridModel, gridColumns, selectFields, sortFields를 파싱한다. 
+		 * 서버로 부터 조회한 Entity의 메타 데이터 <br/>
+		 * 서버로 부터 응답받은 메타 정보를 파싱하여 ResourceSelector 화면구성에 필요한 searchFromFields, resourceFormFields, gridModel, gridColumns, selectFields, sortFields 데이터를 설정한다.
 		 */
 		metaData: {
 			type: Object,
 			observer: 'parseMetaData'
 		}
+
+    /**
+     * 서버로 부터 응답받은 메타 정보를 파싱하여 ResourceSelector 화면 구성을 위해 필요한 데이터가 모두 설정되었다 (즉 ResourceSelector 화면 구성에 필요한 메타 데이터가 모두 설정이 완료되었다)는 이벤트 
+     *
+     * @event things-entity-meta-configured
+     */
 	},
 
 	/**
 	 * resourceName으로 부터 화면 구성 메타 데이터 조회를 위한 메타 URL을 생성
 	 *
-	 * @param {String} resourceName
+	 * @param {String} resourceName Entity 명 
 	 * @return {String} 화면 구성 메타 데이터 조회 URL
 	 */
 	_computeEntityMetaUrl: function(resourceName) {
@@ -70,7 +77,7 @@ Things.EntityMetaBehaviorImpl = {
 	/**
 	 * MetaData를 파싱한다.
 	 *
-	 * @param {Object} metaData
+	 * @param {Object} metaData ResourceSelector 화면 구성을 위해 서버로 부터 응답받은 메타 정보를 파싱한 객체 
 	 */
 	parseMetaData: function(metaData) {
 		if(!metaData) return;

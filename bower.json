@@ -1,10 +1,10 @@
 {
   "name": "things-meta",
-  "version": "0.1.82",
+  "version": "0.1.83",
   "authors": [
     "Hatio Lab. <heartyoh@hatiolab.com>"
   ],
-  "description": "An element for craete search form/resource form/grid's view model.",
+  "description": "An element for configure screen configure data from meta data which received from server",
   "keywords": [
     "web-component",
     "polymer",

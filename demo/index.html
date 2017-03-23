@@ -30,55 +30,74 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         <template>
             <template is="dom-bind" id="content">
                 <things-setting id="setting"></things-setting>
-                <things-resource-meta id="resourceMeta" resource-type="Role" sort-fields="{{sortFields}}" select-fields="{{selectFields}}" search-form-fields="{{searchFormFields}}" resource-form-fields="{{resourceFormFields}}" grid-model="{{gridModel}}" grid-columns="{{gridColumns}}"></things-resource-meta>
+
+                <things-resource-meta 
+                    id="resourceMeta" 
+                    resource-type="Role" 
+                    sort-fields="{{sortFields}}" 
+                    select-fields="{{selectFields}}" 
+                    search-form-fields="{{searchFormFields}}" 
+                    resource-form-fields="{{resourceFormFields}}" 
+                    grid-model="{{gridModel}}" 
+                    grid-columns="{{gridColumns}}">
+                </things-resource-meta>
+
                 <div>
                     <label>sortFields</label>
-                    <iron-autogrow-textarea id="sortFields"> </iron-autogrow-textarea>
+                    <iron-autogrow-textarea id="sortFields"></iron-autogrow-textarea>
                 </div>
                 <div>
                     <label>selectFields</label>
-                    <iron-autogrow-textarea id="selectFields"> </iron-autogrow-textarea>
+                    <iron-autogrow-textarea id="selectFields"></iron-autogrow-textarea>
                 </div>
                 <div>
                     <label>searchFormFields</label>
-                    <iron-autogrow-textarea id="searchFormFields"> </iron-autogrow-textarea>
+                    <iron-autogrow-textarea id="searchFormFields"></iron-autogrow-textarea>
                 </div>
                 <div>
                     <label>resourceFormFields</label>
-                    <iron-autogrow-textarea id="resourceFormFields"> </iron-autogrow-textarea>
+                    <iron-autogrow-textarea id="resourceFormFields"></iron-autogrow-textarea>
                 </div>
                 <div>
                     <label>gridModel</label>
-                    <iron-autogrow-textarea id="gridModel"> </iron-autogrow-textarea>
+                    <iron-autogrow-textarea id="gridModel"></iron-autogrow-textarea>
                 </div>
                 <div>
                     <label>gridColumns</label>
-                    <iron-autogrow-textarea id="gridColumns"> </iron-autogrow-textarea>
+                    <iron-autogrow-textarea id="gridColumns"></iron-autogrow-textarea>
                 </div>
-                <paper-button id="button" raised>Show Meta</paper-button>
-                <things-spinner id="spinner"></things-spinner>
-                <paper-toast id="toast" class="Toast" duration="8000"></paper-toast>
-                <script type="text/javascript">
-                var app = document.querySelector('#content');
-                var setting = document.querySelector('#setting');
-                var resourceMeta = document.querySelector('#resourceMeta');
 
-                window.addEventListener('WebComponentsReady', function() {
-                    if (setting) {
-                        setting.set('globals.baseUrl', 'http://localhost:8080/components/things-meta/demo');
-                    }
-                    if (setting.globals.baseUrl) {
-                        resourceMeta.loadMeta();
-                    }
-                });
-                app.$.button.addEventListener("tap", function() {
-                    app.$.sortFields.value = JSON.stringify(app.$.resourceMeta.sortFields);
-                    app.$.selectFields.value = JSON.stringify(app.$.resourceMeta.selectFields);
-                    app.$.searchFormFields.value = JSON.stringify(app.$.resourceMeta.searchFormFields);
-                    app.$.resourceFormFields.value = JSON.stringify(app.$.resourceMeta.resourceFormFields);
-                    app.$.gridModel.value = JSON.stringify(app.$.resourceMeta.gridModel);
-                    app.$.gridColumns.value = JSON.stringify(app.$.resourceMeta.gridColumns);
-                });
+                <br/>
+
+                <paper-button id="button" raised>Show Meta</paper-button>
+
+                <things-spinner id="spinner"></things-spinner>
+
+                <paper-toast id="toast" class="Toast" duration="8000"></paper-toast>
+
+                <script type="text/javascript">
+                    var app = document.querySelector('#content');
+                    var setting = document.querySelector('#setting');
+
+                    window.addEventListener('WebComponentsReady', function() {
+                        if (setting) {
+                            setting.set('globals.baseUrl', 'http://factory.hatiolab.com/rest');
+                        }
+
+                        if (setting.globals.baseUrl) {
+                            var resourceMeta = document.querySelector('#resourceMeta');
+                            resourceMeta.loadMeta();
+                        }
+                    });
+
+                    app.$.button.addEventListener("tap", function() {
+                        app.$.sortFields.value = JSON.stringify(app.$.resourceMeta.sortFields);
+                        app.$.selectFields.value = JSON.stringify(app.$.resourceMeta.selectFields);
+                        app.$.searchFormFields.value = JSON.stringify(app.$.resourceMeta.searchFormFields);
+                        app.$.resourceFormFields.value = JSON.stringify(app.$.resourceMeta.resourceFormFields);
+                        app.$.gridModel.value = JSON.stringify(app.$.resourceMeta.gridModel);
+                        app.$.gridColumns.value = JSON.stringify(app.$.resourceMeta.gridColumns);
+                    });
                 </script>
             </template>
         </template>

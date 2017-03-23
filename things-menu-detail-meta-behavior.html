@@ -8,8 +8,12 @@
 window.Things = window.Things || {};
 
 /**
- * 구성하고자 하는 메뉴 화면의 디테일 구성을 위해 메타 데이터를 조회하여 모델 정보를 제공하는 Behavior
- * 화면의 디테일 메타 데이터를 조회하는 URL 구성과 메타 데이터를 받은 후 그리드 및 폼 구성에 필요한 모델 정보로 파싱하여 제공한다.
+ * ## Menu Detail 기반의 상세 화면 구성을 위한 데이터를 셋업하기 위한 메타 정보용 컴포넌트.
+ * 
+ * Menu Detail 기반의 상세 화면은 마스터 : 디테일 = 1 : 1인 경우 마스터 폼 화면과 디테일 폼 화면.<br/>
+ * 마스터 : 디테일 = 1 : 1인 경우 마스터 폼 화면과 디테일 그리드 화면으로 구성된다. <br/>
+ * 이에 Master Form : Detail Form 혹은 Master Form : Detail Grid 화면 혹은 Master Form에 대한 설정을 하지 않고
+ * Detail 화면에 대한 구성만 했다면 Detail Form 혹은 Detail Grid화면으로 구성되는데 이 화면을 구성하는데 필요한 메타 정보를 제공한다.
  *
  * @polymerBehavior Things.MenuDetailMetaBehavior
  */
@@ -24,7 +28,7 @@ Things.MenuDetailMetaBehaviorImpl = {
 		},
 
 		/**
-		 * 화면 구성을 위해 필요한 메뉴 메타 데이터를 조회하기 위한 URL
+		 * 상세 화면 구성을 위해 필요한 메뉴 메타 데이터를 조회하기 위한 URL
 		 */
 		menuDetailMetaUrl: {
 			type: String,
@@ -32,7 +36,7 @@ Things.MenuDetailMetaBehaviorImpl = {
 		},		
 
 		/**
-		 * Menu Detail Meta Data - formFields, gridModel, gridColumns, selectFields, sortFields, buttons 등을 파싱한다. 
+		 * 상세 화면 구성을 위한 메타 데이터 - formMetas, gridConfigMetas, gridModelMetas, gridColumnMetas, buttonMetas 등으로 변환된다. 
 		 */
 		metaData: {
 			type: Array,
@@ -81,23 +85,29 @@ Things.MenuDetailMetaBehaviorImpl = {
 		 */
 		buttonMetas: {
 			type: Object
-		}		
+		}
+
+    /**
+     * 서버로 부터 응답받은 메타 정보를 파싱하여 상세 화면 구성을 위해 필요한 데이터가 모두 설정되었다 (즉 상세 화면 구성에 필요한 메타 데이터가 모두 설정이 완료되었다)는 이벤트 
+     *
+     * @event detail-meta-data-configured
+     */
 	},
 
 	/**
-	 * menuId로 부터 Menu Detail Meta URL을 생성
+	 * menuId로 부터 메뉴 상세 메타 데이터 조회를 위한 URL을 생성 
 	 *
-	 * @param {String} menuId
-	 * @return {String} Menu Meta Meta URL
+	 * @param {String} menuId 메뉴 아이디 
+	 * @return {String} 메뉴 상세 메타 데이터 조회를 위한 URL
 	 */
 	_computeMenuDetailMetaUrl: function(menuId) {
 		return 'menu_details/' + menuId + '/meta';
 	},
 
 	/**
-	 * Meta Data를 파싱한다.
+	 * 서버로 부터 응답받은 메뉴 상세에 대한 메타 데이터를 상세 화면 구성을 위해 필요한 메타 데이터로 변환한다.
 	 *
-	 * @param {Array} metaDataList
+	 * @param {Array} metaDataList 서버로 부터 응답받은 메뉴 상세에 대한 메타 데이터
 	 */
 	parseMetaData: function(metaDataList) {
 		if(!metaDataList || metaDataList.length == 0) return;

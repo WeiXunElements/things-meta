@@ -7,8 +7,9 @@
 window.Things = window.Things || {};
 
 /**
- * 구성하고자 하는 리소스 화면 구성을 위해 모델 정보를 제공하는 Behavior
- * 리소스의 메타 데이터를 조회하는 URL 구성과 메타 데이터를 받은 후 검색 폼, 그리드, 디테일 폼에 필요한 모델 정보를 제공한다.
+ * ## 기본 화면 구성을 위해 그리드 관련 메타 정보를 제공하는 Behavior
+ * 그리드 Config, 그리드 모델, 그리드 컬럼, 그리드 버튼등 그리드 구성에 필요한 모델 정보를 제공한다.<br/>
+ * 서버로 부터 받아온 메타 정보를 그리드 모델, 컬럼, 버튼 등의 구체적인 정보로 변환하여 그리드 구성시 필요한 그리드 메타 데이터를 제공한다.
  *
  * @polymerBehavior Things.GridMetaBehavior
  */
@@ -16,28 +17,28 @@ Things.GridMetaBehaviorImpl = {
 
   properties: {
     /**
-     * Grid Config
+     * Grid Config - 그리드 구성에 대한 정보 
      */
     gridConfig: {
       type: Object
     },
 
     /**
-     * Grid model
+     * Grid model - 그리드 모델 정보 
      */
     gridModel: {
       type: Array
     },
 
     /**
-     * Grid columns
+     * Grid columns - 그리드 컬럼 정보 
      */
     gridColumns: {
       type: Array
     },
 
     /**
-     * Buttons
+     * Buttons - 그리드 하단에 표시되는 버튼 정보 
      */
     buttons: {
       type: Array
@@ -45,10 +46,10 @@ Things.GridMetaBehaviorImpl = {
   },
 
   /**
-   * meta data로 부터 buttons를 파싱한다.
+   * 서버로 부터 조회한 그리드 모델 관련 메타 데이터를 버튼으로 변환한다.
    *
-   * @param {Array} buttonList
-   * @return {Array} buttonList
+   * @param {Array} buttonList 서버로 부터 조회한 그리드 버튼 관련 메타 데이터
+   * @return {Array} buttonList 그리드 구성에 필요한 그리드 버튼 데이터
    */
   _parseButtons: function(buttonList) {
     if(buttonList) { 
@@ -59,10 +60,10 @@ Things.GridMetaBehaviorImpl = {
   },  
 
   /**
-   * meta data로 부터 gridModel로 파싱한다.
+   * 서버로 부터 조회한 그리드 모델 관련 메타 데이터를 gridModel로 변환한다.
    *
-   * @param {Array} metaDataList
-   * @return {Array} gridModel
+   * @param {Array} metaDataList 서버로 부터 조회한 그리드 모델 관련 메타 데이터
+   * @return {Array} gridModel 그리드 구성에 필요한 그리드 모델 데이터
    */
   _parseGridModel: function(metaDataList) {
     var gridModelMetaList = metaDataList.filter(function(metaData) { 
@@ -130,10 +131,10 @@ Things.GridMetaBehaviorImpl = {
   },
 
   /**
-   * meta data로 부터 gridColumns로 파싱한다.
+   * 서버로 부터 조회한 그리드 컬럼 관련 메타 데이터를 gridColumns로 변환한다.
    *
-   * @param {Array} metaDataList
-   * @return {Array} gridColumns
+   * @param {Array} metaDataList 서버로 부터 조회한 그리드 컬럼 관련 메타 데이터 리스트 
+   * @return {Array} gridColumns 그리드 구성에 필요한 그리드 컬럼 데이터 
    */
   _parseGridColumns: function(metaDataList) {
     var gridColumnMetaList = metaDataList.filter(function(metaData) { 
@@ -339,10 +340,10 @@ Things.GridMetaBehaviorImpl = {
   },
 
   /**
-   * resource column
+   * Resource Column 구성 
    *
-   * @param {Object} metaData
-   * @param {Object} field
+   * @param {Object} metaData 서버로 부터 조회한 서버측 메타 데이터 
+   * @param {Object} field 그리드 필드 데이터 
    */
   _newResourceColumn: function(metaData, field) {
     var titleField = metaData.grid_format ? metaData.grid_format : 'name';
@@ -381,6 +382,9 @@ Things.GridMetaBehaviorImpl = {
    * 상세 폼, 그리드의 값의 범위를 제한하기 위한 필드
    * 예) 숫자형의 경우 : 0,100 or min:0 or max:100
    * 예) 날짜형의 경우 : 2016-01-01,today or min:today or max:today + 1
+   *
+   * @param {String} rangeVal 범위값 
+   * @param {String} type 범위값의 타입 
    */
   _parseGridValueRange: function(rangeVal, type) {
     if(!rangeVal || rangeVal.length < 1) return null;
@@ -411,9 +415,10 @@ Things.GridMetaBehaviorImpl = {
   },
 
   /**
-   * 문자형 데이터를 객체를 파싱하여 리턴한다.
+   * 문자형 데이터를 Date 객체로 파싱하여 리턴한다.
    *
-   * @params {String} dateStr
+   * @params {String} dateStr 문자로 된 날짜 데이터 
+   * @return {Date} dateStr을 파싱한 Date 객체 
    */
   _calcGridRangeDate: function(dateStr) {
     if(!dateStr) return null;
@@ -431,7 +436,10 @@ Things.GridMetaBehaviorImpl = {
   },
 
   /**
-   * list sorting
+   * 배열 객체인 list를 sortField를 중심으로 소팅한다. 
+   *
+   * @params {Array} list 배열 객체  
+   * @params {String} sortField 배열 객체 중 소트에 활용할 필드 명 
    */
   _sortMetaData: function(list, sortField) {
     list.sort(function(a, b) {

@@ -3,11 +3,17 @@
 <link rel="import" href="../things-ajax/things-ajax.html">
 <link rel="import" href="things-entity-meta-behavior.html">
 
-<!-- 
-<b>Example</b> 
+<!--
+## Entity 기반의 ResourceSelector화면 구성을 위한 데이터를 셋업하기 위한 메타 정보용 컴포넌트.
 
+Entity 기반의 ResourceSelector화면은 검색 조건과 그리드로 구성된다.<br/>
+검색 조건과 그리드는 서버로 부터 받아온 메타 정보를 바탕으로 자동으로 구성되는데 이를 위해서 서버로 부터 설정한 Entity에 대한 메타 정보를 조회하여 ResourceSelector화면 구성을 위한 데이터를 셋업하기 위한 메타 정보용 컴포넌트이다.
+
+Example:
+
+```html
 		<things-entity-meta 
-		  id="resourceMeta" 
+      id="resourceMeta" 
 		  resource-type="Role" 
 		  sort-fields = "{{sortFields}}"
 		  select-fields="{{selectFields}}"
@@ -16,12 +22,15 @@
 		  grid-model ="{{gridModel}}"
 		  grid-columns ="{{gridColumns}}">
 		</things-entity-meta>
+```
 
-
-		resourceMeta.loadMeta();
+```js
+	this.$['resourceMeta'].loadMeta();
+```
 
 @demo demo/index.html
- -->
+-->
+
 <dom-module id="things-entity-meta">
 	<template>
 		<things-ajax 
@@ -39,7 +48,7 @@
 			behaviors: [ Things.EntityMetaBehavior ],
 
 			/**
-			 * load resource meta data
+			 * 서버로 부터 설정한 Entity에 대한 메타 정보를 조회
 			 */
 			loadMeta: function() {
 				this.$['meta-ajax'].generateRequest();

@@ -3,8 +3,28 @@
 <link rel="import" href="things-menu-meta-behavior.html">
 <link rel="import" href="../things-ajax/things-ajax.html">
 
-<!-- 
- 	메뉴 정보를 받아서 메뉴 메타데이터를 조회하기 위한 resource 
+<!--
+## Menu 기반의 화면 구성을 위한 데이터를 셋업하기 위한 메타 정보용 컴포넌트.
+
+기본적인 Menu 기반의 화면은 검색 조건과 그리드 그리고 버튼으로 구성된다.<br/>
+검색 조건과 그리드, 버튼 정보는 서버로 부터 받아온 메타 정보를 바탕으로 자동으로 구성되는데 이를 위해서 서버로 부터 설정한 MenuId에 대한 메타 정보를 조회하여 자동 화면 구성을 위한 데이터를 셋업하기 위한 메타 정보용 컴포넌트이다.
+
+Example:
+
+```html
+		<things-menu-meta 
+      id="resourceMeta" 
+		  menu-id="5" 
+		  sort-fields = "{{sortFields}}"
+		  select-fields="{{selectFields}}"
+		  search-form-fields ="{{searchFormFields}}"
+		  resource-form-fields ="{{resourceFormFields}}"
+		  grid-model ="{{gridModel}}"
+		  grid-columns ="{{gridColumns}}">
+		</things-menu-meta>
+```
+
+@demo demo/index.html
 -->
 
 <dom-module id="things-menu-meta">
