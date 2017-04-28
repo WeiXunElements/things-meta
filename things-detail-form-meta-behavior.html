@@ -15,7 +15,7 @@ Things.DetailFormMetaBehavior = {
 
 	properties: {
 		/**
-		 * 기본 상세 폼 필드 정보 
+		 * 기본 상세 폼 필드 정보
 		 */
 		resourceFormFields: {
 			type: Array
@@ -45,15 +45,15 @@ Things.DetailFormMetaBehavior = {
 	/**
 	 * 서버 측 폼 메타 데이터로 부터 클라이언트 측 폼 구성을 위한 메타 데이터로 변환한다.
 	 *
-	 * @param {Array} metaDataList 서버 측 메타데이터 리스트 
+	 * @param {Array} metaDataList 서버 측 메타데이터 리스트
 	 * @return {Array} resourceFormFields 클라이언트 측 폼 구성을 위한 메타 데이터
 	 */
 	_parseResourceFormFields: function(metaDataList) {
 		var me = this;
 
 		return metaDataList.map(function(metaData) {
-			var field = { 
-				name : metaData.name, 
+			var field = {
+				name : metaData.name,
 				label : Things.DataGlobal.tt(metaData.term),
 				type : metaData.form_editor
 			};
@@ -70,35 +70,35 @@ Things.DetailFormMetaBehavior = {
 
 			me._parseResourceFormField(field, metaData, true);
 			return field;
-		});		
+		});
 	},
 
 	/**
-	 * 
+	 *
 	 * 탭 인덱스 정보를 설정한다. <br/>
 	 * text/number/password/textarea/code-combo/resource-combo에는 tabindex를 할당하고 남은 에디터는 tabIndex를 할당하지 않는다.
-	 * 
-	 * @param {String} editorType 편집기 유형 
+	 *
+	 * @param {String} editorType 편집기 유형
 	 */
 	setTabindex : function(editorType) {
-		if(editorType == 'text' || 
-			 editorType == 'number' || 
+		if(editorType == 'text' ||
+			 editorType == 'number' ||
 			 editorType == 'password' ||
-		   editorType == 'textarea' || 
-		   editorType == 'code-combo' || 
+		   editorType == 'textarea' ||
+		   editorType == 'code-combo' ||
 		   editorType == 'resource-combo') {
 			return this._tabindex++;
 		} else {
 			return -1
 		}
 	},
-	
+
 	/**
 	 * 서버 측 폼 필드 정보를 파싱하여 클라이언트 측 폼을 구성하는데 필요한 데이터로 변환한다.
 	 *
-	 * @param {Object} field 클라이언트 상세 폼에 대한 필드 정보 
-	 * @param {Object} metaData 서버 측 폼 필드 메타 정보 
-	 * @param {Boolean} resourceForm resourceForm인지 아닌지 여부 
+	 * @param {Object} field 클라이언트 상세 폼에 대한 필드 정보
+	 * @param {Object} metaData 서버 측 폼 필드 메타 정보
+	 * @param {Boolean} resourceForm resourceForm인지 아닌지 여부
 	 */
 	_parseResourceFormField: function(field, metaData, resourceForm) {
 		var editor = metaData.form_editor;
@@ -106,10 +106,10 @@ Things.DetailFormMetaBehavior = {
 		if('code-combo' == editor) {
 			field.codeName = metaData.ref_name;
 
-		} else if(editor.indexOf('resource-selector') >= 0 || 
-							editor.indexOf('resource-format-selector') >= 0 || 
-							editor.indexOf('view-field') >= 0 || 
-							editor.indexOf('resource-field') >= 0 || 
+		} else if(editor.indexOf('resource-selector') >= 0 ||
+							editor.indexOf('resource-format-selector') >= 0 ||
+							editor.indexOf('view-field') >= 0 ||
+							editor.indexOf('resource-field') >= 0 ||
 							editor.indexOf('resource-combo') >= 0 ||
 							editor.indexOf('image-selector') >= 0) {
 
@@ -120,11 +120,12 @@ Things.DetailFormMetaBehavior = {
 				bindFields : metaData.ref_related,
 				submitName : field.name
 			};
-			
+
 			if(editor.indexOf('.') > 0) {
 				var editorSplitArr = editor.split('.');
 				field.type = editorSplitArr[0];
 				field.userData.delegateColumn = editorSplitArr[1];
+
 			} else {
 				field.type = editor;
 			}
@@ -147,21 +148,22 @@ Things.DetailFormMetaBehavior = {
 
 		} else if ('positive-number' == editor) {
 			field.userData = { type : 'number', min : 0};
-			if(metaData.form_format){
+			if(metaData.form_format) {
 				field.userData.format = metaData.form_format;
 			}
 
 		} else if ('negative-number' == editor) {
 			field.userData = { type : 'number', max : 0 };
-			if(metaData.form_format){
+			if(metaData.form_format) {
 				field.userData.format = metaData.form_format;
 			}
 
 		} else if ('number' == editor) {
 			field.userData = { type : metaData.col_type };
-			if(metaData.form_format){
+			if(metaData.form_format) {
 				field.userData.format = metaData.form_format;
 			}
+
 			this._parseFormValueRange(field, metaData.range_val, 'number');
 
 		} else if('textarea' == editor) {
@@ -177,24 +179,35 @@ Things.DetailFormMetaBehavior = {
 			field.userData = { defaultRange : metaData.def_val };
 			this._parseFormValueRange(field, metaData.range_val, 'date');
 
+		} else if('date-picker' == editor) {
+			if(metaData.form_format || metaData.def_val) {
+				field.userData = {};
+				if(metaData.form_format) field.userData.format = metaData.form_format;
+				if(metaData.def_val) field.default = this._calcDate(metaData.def_val);
+			}
+
+		} else if('time-picker' == editor || 'datetime-picker' == editor) {
+			if(metaData.form_format) {
+				field.userData = { format : metaData.form_format };
+			}
+
 		} else if('hidden' == editor) {
 			field.userData = { hidden: true };
-			
+
 		} else if('readonly' == editor) {
-			if(metaData.ref_type){
-				if(metaData.ref_type=='CommonCode'){
-					editor ='code-combo'
-					field.type ='code-combo'
-					field.codeName = metaData.ref_name;
-				}
+			if(metaData.ref_type && metaData.ref_type == 'CommonCode') {
+				editor = 'code-combo'
+				field.type = 'code-combo'
+				field.codeName = metaData.ref_name;
 			}
-			field.userData = { type: metaData.col_type, readonly: true};
+
+			field.userData = { type: metaData.col_type, readonly: true };
 		}
-		
-		if(metaData.def_val) {
+
+		if(metaData.def_val && !field.default) {
 			field.default = metaData.def_val;
 		}
-		
+
 		if(typeof metaData.nullable != 'undefined' && metaData.nullable == false) {
 			field.userData = field.userData ? field.userData : {};
 			field.userData.required = true;
@@ -202,14 +215,14 @@ Things.DetailFormMetaBehavior = {
 	},
 
 	/**
-	 * 범위 값 정보를 파싱 
+	 * 범위 값 정보를 파싱
 	 * 상세 폼, 그리드의 값의 범위를 제한하기 위한 필드
 	 * 예) 숫자형의 경우 : 0,100 or min:0 or max:100
 	 * 예) 날짜형의 경우 : 2016-01-01,today or min:today or max:today + 1
    *
-   * @param {String} field 필드 메타 정보 
-   * @param {String} rangeVal 범위값 
-   * @param {String} type 범위값의 타입 
+   * @param {String} field 필드 메타 정보
+   * @param {String} rangeVal 범위값
+   * @param {String} type 범위값의 타입
 	 */
 	_parseFormValueRange: function(field, rangeVal, type) {
 		if(!rangeVal || rangeVal.length < 1) return;
@@ -231,7 +244,7 @@ Things.DetailFormMetaBehavior = {
 			max = rangeVal.substr(4).trim();
 		}
 
-		// 날짜형인 경우 
+		// 날짜형인 경우
 		if (type == 'date') {
 			min = this._calcDate(min);
 			max = this._calcDate(max);
@@ -244,13 +257,13 @@ Things.DetailFormMetaBehavior = {
 	/**
 	 * 문자형 데이터를 Date 객체로 파싱하여 리턴한다.
 	 *
-	 * @params {String} dateStr 문자로 된 날짜 데이터 
-	 * @return {Date} dateStr을 파싱한 Date 객체 
+	 * @params {String} dateStr 문자로 된 날짜 데이터
+	 * @return {Date} dateStr을 파싱한 Date 객체
 	 */
 	_calcDate: function(dateStr) {
 		if(!dateStr) return null;
 
-		// 1. dateStr이 today가 들어가 있다면 
+		// 1. dateStr이 today가 들어가 있다면
 		if(dateStr.indexOf('today') >= 0) {
 			dateStr = dateStr.replace('today', 'var dt = new Date(); dt.setDate(dt.getDate()') + ')';
 			var time = eval(dateStr);

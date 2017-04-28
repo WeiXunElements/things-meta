@@ -13,7 +13,6 @@ window.Things = window.Things || {};
 Things.SearchFormMetaBehavior = {
 
 	properties: {
-
 		/**
 		 * 리스트 조회시 검색할 필드 리스트. ',' 구분자로 구분한다.
 		 */
@@ -38,35 +37,35 @@ Things.SearchFormMetaBehavior = {
 
 	/**
 	 * meta data로 부터 select fields를 파싱한다.
-	 *
+	 *********
 	 * @param {Array} metaDataList
 	 * @return {String} selectFields
 	 */
 	_parseSelectFields: function(metaDataList) {
-		var listMetaList = metaDataList.filter(function(metaData) { 
+		var listMetaList = metaDataList.filter(function(metaData) {
 			return (metaData.name == 'id' || (metaData.grid_rank && metaData.grid_rank > 0 && (!metaData.virtual_field || metaData.virtual_field == false)));
 		});
 
-		var selectColumns = listMetaList.map(function(metaData) { 
+		var selectColumns = listMetaList.map(function(metaData) {
 			if(metaData.grid_editor && (metaData.grid_editor.indexOf('resource-selector') >= 0 || metaData.grid_editor.indexOf('resource-column') >= 0 || metaData.grid_editor.indexOf('file-selector') >= 0)) {
 				return metaData.name.substr(0, metaData.name.indexOf('_id'));
 			} else {
-				return metaData.name; 
+				return metaData.name;
 			}
 		});
-		
+
 		return selectColumns.join(',');
 	},
 
 	/**
 	 * meta data로 부터 SortFields로 파싱한다.
-	 *
+	 *********
 	 * @param {Array} metaDataList
 	 * @return {Array} sortFields
 	 */
 	_parseSortFields: function(metaDataList) {
 		var orderMetaList = metaDataList.filter(function(metaData) {
-			return metaData.sort_rank && metaData.sort_rank > 0; 
+			return metaData.sort_rank && metaData.sort_rank > 0;
 		});
 
 		if(!orderMetaList || orderMetaList.length == 0) return;
@@ -82,40 +81,40 @@ Things.SearchFormMetaBehavior = {
 
 	/**
 	 * meta data로 부터 searchFormFields로 파싱한다.
-	 *
+	 *********
 	 * @param {Array} metaDataList
 	 * @return {Array} searchFormFields
 	 */
 	_parseSearchFormFields: function(metaDataList) {
 		var searchMetaList = metaDataList.filter(function(metaData) {
-			return metaData.search_rank && metaData.search_rank > 0; 
+			return metaData.search_rank && metaData.search_rank > 0;
 		});
 		this._sortMetaData(searchMetaList, 'search_rank');
 		var me = this;
-		
+
 		return searchMetaList.map(function(metaData) {
-			var field = { 
-				name : metaData.name, 
+			var field = {
+				name : metaData.name,
 				label : Things.DataGlobal.tt(metaData.term),
 				type : metaData.search_editor,
 				tabindex : metaData.search_rank,
 				op : metaData.search_oper ? metaData.search_oper : 'eq'
 			};
-			
+
 			if(!metaData.search_editor) metaData.search_editor = 'text';
 			if(metaData.search_editor) me._parseSearchFormField(field, metaData, false);
 			if(metaData.search_init_val) field.default = metaData.search_init_val;
-			
+
 			return field;
 		});
 	},
 
 	/**
 	 * form field를 파싱한다.
-	 *
+	 *********
 	 * @param {Object} field
 	 * @param {Object} metaData
-	 * @param {Boolean} resourceForm resourceForm인지 아닌지 여부 
+	 * @param {Boolean} resourceForm resourceForm인지 아닌지 여부
 	 */
 	_parseSearchFormField: function(field, metaData, resourceForm) {
 		var editor = metaData.search_editor;
@@ -123,9 +122,9 @@ Things.SearchFormMetaBehavior = {
 		if('code-combo' == editor) {
 			field.codeName = metaData.ref_name;
 
-		} else if(editor.indexOf('resource-selector') >= 0 || 
-			        editor.indexOf('resource-format-selector') >= 0 || 
-			        editor.indexOf('resource-field') >= 0 || 
+		} else if(editor.indexOf('resource-selector') >= 0 ||
+			        editor.indexOf('resource-format-selector') >= 0 ||
+			        editor.indexOf('resource-field') >= 0 ||
 			        editor.indexOf('resource-combo') >= 0) {
 
 			field.userData = {
@@ -135,7 +134,7 @@ Things.SearchFormMetaBehavior = {
 				bindFields : metaData.ref_related,
 				submitName : field.name
 			};
-			
+
 			if(editor.indexOf('.') > 0) {
 				var editorSplitArr = editor.split('.');
 				field.type = editorSplitArr[0];
@@ -164,11 +163,27 @@ Things.SearchFormMetaBehavior = {
 		} else if('date-from-to-picker' == editor || 'ranged-date-picker' == editor) {
 			field.userData = { defaultRange : metaData.def_val, format : metaData.search_name };
 			this._parseSearchValueRange(field, metaData.range_val, 'date');
+
+		} else if('date-picker' == editor) {
+			if(metaData.search_name || metaData.search_init_val) {
+				field.userData = {};
+				if(metaData.search_name) field.userData.format = metaData.search_name;
+				if(metaData.search_init_val) field.userData.defValue = this._calcDate(metaData.search_init_val);
+			}
+
+		} else if('time-picker' == editor || 'datetime-picker' == editor) {
+			if(metaData.search_name) {
+				field.userData = { format : metaData.search_name };
+			}
 		}
 	},
 
 	/**
 	 * list sorting
+	 *********
+	 * @param {Array} list
+	 * @param {String} sortField
+	 * @return {Array} sorted list
 	 */
 	_sortMetaData: function(list, sortField) {
 		list.sort(function(a, b) {
@@ -177,10 +192,14 @@ Things.SearchFormMetaBehavior = {
 	},
 
 	/**
-	 * 범위 값 정보를 파싱 
+	 * 범위 값 정보를 파싱
 	 * 상세 폼, 그리드의 값의 범위를 제한하기 위한 필드
 	 * 예) 숫자형의 경우 : 0,100 or min:0 or max:100
 	 * 예) 날짜형의 경우 : 2016-01-01,today or min:today or max:today + 1
+	 *********
+	 * @param {Object} field
+	 * @param {String} rangeVal
+	 * @param {String} type
 	 */
 	_parseSearchValueRange: function(field, rangeVal, type) {
 		if(!rangeVal || rangeVal.length < 1) return;
@@ -202,10 +221,10 @@ Things.SearchFormMetaBehavior = {
 			max = rangeVal.substr(4).trim();
 		}
 
-		// 날짜형인 경우 
+		// 날짜형인 경우
 		if (type == 'date') {
-			min = this._calcRangeDate(min);
-			max = this._calcRangeDate(max);
+			min = this._calcDate(min);
+			max = this._calcDate(max);
 		}
 
 		if(min) field.userData.min = min;
@@ -214,13 +233,13 @@ Things.SearchFormMetaBehavior = {
 
 	/**
 	 * 문자형 데이터를 객체를 파싱하여 리턴한다.
-	 *
+	 *********
 	 * @params {String} dateStr
 	 */
-	_calcRangeDate: function(dateStr) {
+	_calcDate: function(dateStr) {
 		if(!dateStr) return null;
 
-		// 1. dateStr이 today가 들어가 있다면 
+		// 1. dateStr이 today가 들어가 있다면
 		if(dateStr.indexOf('today') >= 0) {
 			dateStr = dateStr.replace('today', 'var dt = new Date(); dt.setDate(dt.getDate()') + ')';
 			var time = eval(dateStr);
