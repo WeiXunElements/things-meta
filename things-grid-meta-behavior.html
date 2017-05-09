@@ -164,14 +164,21 @@ Things.GridMetaBehaviorImpl = {
       var editor = metaData.grid_editor;
       
       if(editor) {
-        if(('code-combo' == editor || 'code-column' == editor) && metaData.code_list && metaData.code_list.length > 0) {
-          field.editor = { type: 'list', domainOnly: true };
+        if('code-combo' == editor || 'code-column' == editor) {
+          field.editor = { type: 'list', domainOnly: true, editable: (editor == 'code-combo') };
           field.lookupDisplay = true;
-          field.lookupValues = metaData.code_list.map(function(code) { return code.name });
-          field.lookupValues.unshift('');
-          field.lookupLabels = metaData.code_list.map(function(code) { return code.description });
-          field.lookupLabels.unshift('');
-          if(editor == 'code-column') field.editable = false;
+          field.userData = { resourceName : metaData.ref_name };
+
+          if(metaData.code_list && metaData.code_list.length > 0) {
+            field.lookupValues = metaData.code_list.map(function(code) { return code.name });
+            field.lookupLabels = metaData.code_list.map(function(code) { return code.description });
+            field.lookupValues.unshift('');
+            field.lookupLabels.unshift('');
+
+          } else {
+            field.lookupValues = [];
+            field.lookupLabels = [];
+          }
 
         } else if(editor == 'checkbox') {
           field.editable = false;
