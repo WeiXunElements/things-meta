@@ -171,7 +171,7 @@ Things.SearchFormMetaBehavior = {
 				if(metaData.search_init_val) field.userData.defValue = this._calcDate(metaData.search_init_val);
 			}
 
-		} else if('time-picker' == editor || 'datetime-picker' == editor) {
+		} else if('time-picker' == editor || 'datetime-picker' == editor || 'ranged-datetime-picker' == editor) {
 			if(metaData.search_name) {
 				field.userData = { format : metaData.search_name };
 			}
