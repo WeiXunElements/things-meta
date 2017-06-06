@@ -123,9 +123,9 @@ Things.SearchFormMetaBehavior = {
 			field.codeName = metaData.ref_name;
 
 		} else if(editor.indexOf('resource-selector') >= 0 ||
-			        editor.indexOf('resource-format-selector') >= 0 ||
-			        editor.indexOf('resource-field') >= 0 ||
-			        editor.indexOf('resource-combo') >= 0) {
+							editor.indexOf('resource-format-selector') >= 0 ||
+							editor.indexOf('resource-field') >= 0 ||
+							editor.indexOf('resource-combo') >= 0) {
 
 			field.userData = {
 				resourceType : metaData.ref_type,
@@ -159,10 +159,12 @@ Things.SearchFormMetaBehavior = {
 		} else if (editor == 'number') {
 			field.userData = { type : metaData.col_type };
 			this._parseSearchValueRange(field, metaData.range_val, 'number');
+			//this._parseSearchValueRange(field, metaData.search_init_val, 'number');
 
-		} else if('date-from-to-picker' == editor || 'ranged-date-picker' == editor) {
+		} else if('date-from-to-picker' == editor || 'ranged-date-picker' == editor) {			
 			field.userData = { defaultRange : metaData.def_val, format : metaData.search_name };
-			this._parseSearchValueRange(field, metaData.range_val, 'date');
+			this._parseSearchValueRange(field, metaData.search_init_val, 'date');
+			//this._parseSearchValueRange(field, metaData.range_val, 'date');
 
 		} else if('date-picker' == editor) {
 			if(metaData.search_name || metaData.search_init_val) {
@@ -209,21 +211,29 @@ Things.SearchFormMetaBehavior = {
 		if(!rangeVal || rangeVal.length < 1) return;
 		if(type != 'number' && type != 'date') return;
 
-		field.userData = field.userData ? field.userData : {};
-		var rangeType = rangeVal.indexOf(',') > 0 ? 'min-max' : (rangeVal.indexOf('min') >= 0 ? 'min' : (rangeVal.indexOf('max') >= 0 ? 'max' : 'none'));
-		if(rangeType == 'none') return;
-		var min = null, max = null;
+		var rangeType = rangeVal.indexOf(',') > 0 ? 'min-max' : (rangeVal.indexOf(',') == 0 ? 'max' : 'min');
+		if(rangeVal.indexOf('min') == 0) rangeType = 'min';
+		if(rangeVal.indexOf('max') == 0) rangeType = 'max';
 
+		if(rangeVal.indexOf(',') == 0) {
+			rangeVal = rangeVal.substr(1).trim();
+		}
+
+		var min = null, max = null;
 		if(rangeType == 'min-max') {
-			min = rangeVal.split(',')[0];
-			max = rangeVal.split(',')[1];
+			var rangeValArr = rangeVal.split(',');
+			min = rangeValArr[0].trim();
+			max = rangeValArr[1].trim();
 
 		} else if(rangeType == 'min') {
-			min = rangeVal.substr(4).trim();
+			min = rangeVal.trim();
 
 		} else if(rangeType == 'max') {
-			max = rangeVal.substr(4).trim();
+			max = rangeVal.trim();
 		}
+
+		if(min) min = (min.indexOf('min') >= 0) ? min.substr(4).trim() : min;
+		if(max) max = (max.indexOf('max') >= 0) ? max.substr(4).trim() : max;
 
 		// 날짜형인 경우
 		if (type == 'date') {
@@ -231,6 +241,7 @@ Things.SearchFormMetaBehavior = {
 			max = this._calcDate(max);
 		}
 
+		field.userData = field.userData ? field.userData : {};
 		if(min) field.userData.min = min;
 		if(max) field.userData.max = max;
 	},
@@ -248,31 +259,39 @@ Things.SearchFormMetaBehavior = {
 	 * @param {Object} field
 	 * @param {String} initVal
 	 */
-	 _parseDatetimeInitValue: function(field, initVal) {
-	   if(!initVal || initVal.length < 1) return;
+	_parseDatetimeInitValue: function(field, initVal) {
+		if(!initVal || initVal.length < 1) return;
 
-	   field.userData = field.userData ? field.userData : {};
-		 var rangeType = initVal.indexOf(',') > 0 ? 'from-to' : (initVal.indexOf(',') == 0 ? 'to' : 'from');
-	   var from = null, to = null;
+		var rangeType = initVal.indexOf(',') > 0 ? 'from-to' : (initVal.indexOf(',') == 0 ? 'to' : 'from');
+		if(initVal.indexOf('min') == 0) rangeType = 'from';
+		if(initVal.indexOf('max') == 0) rangeType = 'to';
+		if(initVal.indexOf(',') == 0) {
+			initVal = initVal.substr(1).trim();
+		}
 
-	   if(rangeType == 'from-to') {
-			 var initValArr = initVal.split(',');
-	     from = initValArr[0].trim();
-	     to = initValArr[1].trim();
+		var from = null, to = null;
+		if(rangeType == 'from-to') {
+			var initValArr = initVal.split(',');
+			from = initValArr[0].trim();
+			to = initValArr[1].trim();
 
-	   } else if(rangeType == 'from') {
-	     from = initVal.trim();
+		} else if(rangeType == 'from') {
+			from = initVal.trim();
 
-	   } else if(rangeType == 'to') {
-	     to = initVal.trim().replace(',', '');
-	   }
+		} else if(rangeType == 'to') {
+			to = initVal.trim();
+		}
 
-	   if(from) from = this._clacDateTime(from);
-	   if(to) to = this._clacDateTime(to);
+		if(from) from = (from.indexOf('min') >= 0) ? from.substr(4).trim() : from;
+		if(to) to = (to.indexOf('max') >= 0) ? to.substr(4).trim() : to;
 
-	   if(from) field.userData.from = from;
-	   if(to) field.userData.to = to;
-	 },
+		if(from) from = this._clacDateTime(from);
+		if(to) to = this._clacDateTime(to);
+
+		field.userData = field.userData ? field.userData : {};
+		if(from) field.userData.from = from;
+		if(to) field.userData.to = to;
+	},
 
 	/**
 	 * 문자형 데이터를 객체를 파싱하여 리턴한다.
