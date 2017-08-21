@@ -21,28 +21,28 @@ Things.GridMetaBehaviorImpl = {
 
   properties: {
     /**
-     * Grid Config - 그리드 구성에 대한 정보 
+     * Grid Config - 그리드 구성에 대한 정보
      */
     gridConfig: {
       type: Object
     },
 
     /**
-     * Grid model - 그리드 모델 정보 
+     * Grid model - 그리드 모델 정보
      */
     gridModel: {
       type: Array
     },
 
     /**
-     * Grid columns - 그리드 컬럼 정보 
+     * Grid columns - 그리드 컬럼 정보
      */
     gridColumns: {
       type: Array
     },
 
     /**
-     * Buttons - 그리드 하단에 표시되는 버튼 정보 
+     * Buttons - 그리드 하단에 표시되는 버튼 정보
      */
     buttons: {
       type: Array
@@ -56,12 +56,12 @@ Things.GridMetaBehaviorImpl = {
    * @return {Array} buttonList 그리드 구성에 필요한 그리드 버튼 데이터
    */
   _parseButtons: function(buttonList) {
-    if(buttonList) { 
-      buttonList.forEach(function(button) { button.id = button.text + '-btn'; }); 
+    if(buttonList) {
+      buttonList.forEach(function(button) { button.id = button.text + '-btn'; });
     }
-    
+
     return buttonList;
-  },  
+  },
 
   /**
    * 서버로 부터 조회한 그리드 모델 관련 메타 데이터를 gridModel로 변환한다.
@@ -70,7 +70,7 @@ Things.GridMetaBehaviorImpl = {
    * @return {Array} gridModel 그리드 구성에 필요한 그리드 모델 데이터
    */
   _parseGridModel: function(metaDataList) {
-    var gridModelMetaList = metaDataList.filter(function(metaData) { 
+    var gridModelMetaList = metaDataList.filter(function(metaData) {
       if(metaData.name == 'id' && !metaData.grid_rank) metaData.grid_rank = -10;
       return metaData.grid_rank && metaData.grid_rank != 0;
     });
@@ -121,9 +121,9 @@ Things.GridMetaBehaviorImpl = {
       }
 
       if(!metaData.virtual_field || metaData.virtual_field == false) {
-        selectColumns += field.fieldName + ',';  
+        selectColumns += field.fieldName + ',';
       }
-      
+
       return field;
     });
 
@@ -137,11 +137,11 @@ Things.GridMetaBehaviorImpl = {
   /**
    * 서버로 부터 조회한 그리드 컬럼 관련 메타 데이터를 gridColumns로 변환한다.
    *
-   * @param {Array} metaDataList 서버로 부터 조회한 그리드 컬럼 관련 메타 데이터 리스트 
-   * @return {Array} gridColumns 그리드 구성에 필요한 그리드 컬럼 데이터 
+   * @param {Array} metaDataList 서버로 부터 조회한 그리드 컬럼 관련 메타 데이터 리스트
+   * @return {Array} gridColumns 그리드 구성에 필요한 그리드 컬럼 데이터
    */
   _parseGridColumns: function(metaDataList) {
-    var gridColumnMetaList = metaDataList.filter(function(metaData) { 
+    var gridColumnMetaList = metaDataList.filter(function(metaData) {
       return metaData.grid_rank && metaData.grid_rank != 0;
     });
 
@@ -150,8 +150,8 @@ Things.GridMetaBehaviorImpl = {
 
     var gColumns = gridColumnMetaList.map(function(metaData) {
       var field = {
-        name: metaData.name, 
-        fieldName: metaData.name, 
+        name: metaData.name,
+        fieldName: metaData.name,
         width: metaData.grid_width ? metaData.grid_width : 100,
         header: { text: Things.DataGlobal.tt(metaData.term) },
         styles: {},
@@ -166,7 +166,7 @@ Things.GridMetaBehaviorImpl = {
       // align 정보가 있으면 설정
       if(metaData.grid_align) field.styles.textAlignment = metaData.grid_align;
       var editor = metaData.grid_editor;
-      
+
       if(editor) {
         if('code-combo' == editor || 'code-column' == editor) {
           field.editor = { type: 'list', domainOnly: true, editable: (editor == 'code-combo') };
@@ -217,7 +217,7 @@ Things.GridMetaBehaviorImpl = {
           var originalField = field.name;
           me._newResourceColumn(metaData, field);
           field.button = 'action';
-          field.buttonVisibility = 'always';          
+          field.buttonVisibility = 'always';
           field.editable = false;
           field.styles.iconIndex = 'resource-selector';
           field.userData.originalField = originalField;
@@ -257,7 +257,7 @@ Things.GridMetaBehaviorImpl = {
           field.styles.datetimeFormat = metaData.grid_format ? metaData.grid_format : 'yyyy-MM-dd';
           field.styles.textAlignment = 'center';
           var minMax = me._parseGridValueRange(metaData.range_val, 'date');
-          
+
           if(minMax && minMax.length == 2) {
             field.userData = field.userData ? field.userData : {};
             if(minMax[0]) field.userData.minDate = minMax[0];
@@ -280,19 +280,19 @@ Things.GridMetaBehaviorImpl = {
           me._newResourceColumn(metaData, field);
           field.userData.defaultStorage = metaData.grid_format;
           field.userData.titleField = 'name';
-          
+
         } else if (editor.indexOf('image-renderer') >= 0) {
           field.editable = false;
           field.styles.iconIndex = 'image-renderer';
           field.type = 'calced';
           field.renderer = { type: 'image', imageDisplay: 'auto' };
-          
+
           var baseUrl = me.globals.baseUrl;
           field.valueCallback = function(column, row) {
             var imgId = row.getValue(field.name);
             return imgId ? baseUrl + '/download/' + imgId : '';
           };
-          
+
         } else if(editor == 'download-link') {
           field.renderer = {
             type: 'link',
@@ -320,7 +320,7 @@ Things.GridMetaBehaviorImpl = {
         } else if (editor == 'password') {
           field.displayCallback = function(index, value) {
             var hiddenString = '';
-            
+
             if(value) {
               for(var i = 0; i < value.length; i++) {
                 hiddenString += '*';
@@ -344,6 +344,11 @@ Things.GridMetaBehaviorImpl = {
         field.maxValueLength = metaData.col_size
       }
 
+      if(typeof metaData.ext_field != 'undefined' && metaData.ext_field == true) {
+  			field.userData = field.userData || {};
+  			field.userData.extField = metaData.ext_field;
+  		}
+
       return field;
     });
 
@@ -351,10 +356,10 @@ Things.GridMetaBehaviorImpl = {
   },
 
   /**
-   * Resource Column 구성 
+   * Resource Column 구성
    *
-   * @param {Object} metaData 서버로 부터 조회한 서버측 메타 데이터 
-   * @param {Object} field 그리드 필드 데이터 
+   * @param {Object} metaData 서버로 부터 조회한 서버측 메타 데이터
+   * @param {Object} field 그리드 필드 데이터
    */
   _newResourceColumn: function(metaData, field) {
     var titleField = metaData.grid_format ? metaData.grid_format : 'name';
@@ -362,7 +367,7 @@ Things.GridMetaBehaviorImpl = {
     field.name = field.name.substr(0, field.name.indexOf('_id'));
     field.fieldName = field.name;
 
-    // 1. Object 형식의 데이터를 화면에 표시하기 위한 콜백 함수 
+    // 1. Object 형식의 데이터를 화면에 표시하기 위한 콜백 함수
     field.displayCallback = function(index, value) {
       var rowObj = index.getRow().getRowObject();
       var fieldName = index.column.dataFieldName();
@@ -377,25 +382,25 @@ Things.GridMetaBehaviorImpl = {
       return retVal;
     };
 
-    // 2. Object 형식의 데이터를 Text 형식으로 클립보드에 전달 
+    // 2. Object 형식의 데이터를 Text 형식으로 클립보드에 전달
     field.copyCallback = function (row, field, value) {
       return value ? JSON.stringify(value) : value;
     },
 
-    // 3. Text 형식으로 전달된 클립보드 데이터를 전달받아 Paste Logic 수행 
+    // 3. Text 형식으로 전달된 클립보드 데이터를 전달받아 Paste Logic 수행
     field.pasteCallback = function (row, field, text) {
       return text ? JSON.parse(text) : text;
     }
   },
 
   /**
-   * 범위 값 정보를 파싱 
+   * 범위 값 정보를 파싱
    * 상세 폼, 그리드의 값의 범위를 제한하기 위한 필드
    * 예) 숫자형의 경우 : 0,100 or min:0 or max:100
    * 예) 날짜형의 경우 : 2016-01-01,today or min:today or max:today + 1
    *
-   * @param {String} rangeVal 범위값 
-   * @param {String} type 범위값의 타입 
+   * @param {String} rangeVal 범위값
+   * @param {String} type 범위값의 타입
    */
   _parseGridValueRange: function(rangeVal, type) {
     if(!rangeVal || rangeVal.length < 1) return null;
@@ -416,7 +421,7 @@ Things.GridMetaBehaviorImpl = {
       max = rangeVal.substr(4).trim();
     }
 
-    // 날짜형인 경우 
+    // 날짜형인 경우
     if (type == 'date') {
       min = this._calcGridRangeDate(min);
       max = this._calcGridRangeDate(max);
@@ -428,13 +433,13 @@ Things.GridMetaBehaviorImpl = {
   /**
    * 문자형 데이터를 Date 객체로 파싱하여 리턴한다.
    *
-   * @params {String} dateStr 문자로 된 날짜 데이터 
-   * @return {Date} dateStr을 파싱한 Date 객체 
+   * @params {String} dateStr 문자로 된 날짜 데이터
+   * @return {Date} dateStr을 파싱한 Date 객체
    */
   _calcGridRangeDate: function(dateStr) {
     if(!dateStr) return null;
 
-    // 1. dateStr이 today가 들어가 있다면 
+    // 1. dateStr이 today가 들어가 있다면
     if(dateStr.indexOf('today') >= 0) {
       dateStr = dateStr.replace('today', 'var dt = new Date(); dt.setDate(dt.getDate()') + ')';
       var time = eval(dateStr);
@@ -447,10 +452,10 @@ Things.GridMetaBehaviorImpl = {
   },
 
   /**
-   * 배열 객체인 list를 sortField를 중심으로 소팅한다. 
+   * 배열 객체인 list를 sortField를 중심으로 소팅한다.
    *
-   * @params {Array} list 배열 객체  
-   * @params {String} sortField 배열 객체 중 소트에 활용할 필드 명 
+   * @params {Array} list 배열 객체
+   * @params {String} sortField 배열 객체 중 소트에 활용할 필드 명
    */
   _sortMetaData: function(list, sortField) {
     list.sort(function(a, b) {

@@ -216,6 +216,11 @@ Things.DetailFormMetaBehavior = {
 			field.userData = field.userData ? field.userData : {};
 			field.userData.required = true;
 		}
+
+		if(typeof metaData.ext_field != 'undefined' && metaData.ext_field == true) {
+			field.userData = field.userData || {};
+			field.userData.extField = metaData.ext_field;
+		}		
 	},
 
 	/**
