@@ -227,6 +227,19 @@ Things.GridMetaBehaviorImpl = {
           field.userData.ownerField = field.name;
           field.userData.bindFields = metaData.ref_related;
 
+        } else if(editor.indexOf('popup-editor') >= 0) {
+          field.styles.iconIndex = 'popup-editor';
+          field.customButtons = [{
+            visibility: 'always',
+            imageUrl: 'images/grid/iconDetail.png',
+            hoverUrl: 'images/grid/iconDetail.png',
+            downUrl: 'images/grid/iconDetail.png'
+          }];
+
+          field.userData = {
+            editorMode: metaData.grid_format
+          };
+          
         } else if(editor.indexOf('resource-format-selector') >= 0) {
           field.editable = false;
           field.styles.iconIndex = 'resource-format-selector';
