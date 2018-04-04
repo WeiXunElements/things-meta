@@ -173,15 +173,23 @@ Things.GridMetaBehaviorImpl = {
           field.lookupDisplay = true;
           field.userData = { resourceName : metaData.ref_name };
 
-          if(metaData.code_list && metaData.code_list.length > 0) {
-            field.lookupValues = metaData.code_list.map(function(code) { return code.name });
-            field.lookupLabels = metaData.code_list.map(function(code) { return code.description });
-            field.lookupValues.unshift('');
-            field.lookupLabels.unshift('');
-
+          /**
+           * 2018.04.04 - Added by CuiGaung
+           * code-column시 편집 못 하게 수정
+           */
+          if ('code-column' == editor) {
+              field.editable = false;
           } else {
-            field.lookupValues = [];
-            field.lookupLabels = [];
+              if(metaData.code_list && metaData.code_list.length > 0) {
+                field.lookupValues = metaData.code_list.map(function(code) { return code.name });
+                field.lookupLabels = metaData.code_list.map(function(code) { return code.description });
+                field.lookupValues.unshift('');
+                field.lookupLabels.unshift('');
+
+              } else {
+                field.lookupValues = [];
+                field.lookupLabels = [];
+              }
           }
 
         } else if(editor == 'checkbox') {
@@ -239,7 +247,7 @@ Things.GridMetaBehaviorImpl = {
           field.userData = {
             editorMode: metaData.grid_format
           };
-          
+
         } else if(editor.indexOf('resource-format-selector') >= 0) {
           field.editable = false;
           field.styles.iconIndex = 'resource-format-selector';
