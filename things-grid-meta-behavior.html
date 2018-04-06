@@ -168,10 +168,14 @@ Things.GridMetaBehaviorImpl = {
       var editor = metaData.grid_editor;
 
       if(editor) {
-        if('code-combo' == editor || 'code-column' == editor) {
-          field.editor = { type: 'list', domainOnly: true, editable: (editor == 'code-combo') };
+        if('code-combo' == editor || 'code-column' == editor || 'resource-code' == editor) {
+          field.editor = { type: 'list', domainOnly: true, editable: (editor != 'code-column') };
           field.lookupDisplay = true;
-          field.userData = { resourceName : metaData.ref_name };
+          field.userData = { resourceType : 'code', resourceName : metaData.ref_name };
+          if('resource-code' == editor) {
+            field.userData.resourceType = 'entity';
+            field.userData.selectFields = metaData.grid_format ? metaData.grid_format : 'name,description';
+          }
 
           if(metaData.code_list && metaData.code_list.length > 0) {
             field.lookupValues = metaData.code_list.map(function(code) { return code.name });
@@ -239,7 +243,7 @@ Things.GridMetaBehaviorImpl = {
           field.userData = {
             editorMode: metaData.grid_format
           };
-          
+
         } else if(editor.indexOf('resource-format-selector') >= 0) {
           field.editable = false;
           field.styles.iconIndex = 'resource-format-selector';

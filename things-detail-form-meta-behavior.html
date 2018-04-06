@@ -115,6 +115,7 @@ Things.DetailFormMetaBehavior = {
 							editor.indexOf('view-field') >= 0 ||
 							editor.indexOf('resource-field') >= 0 ||
 							editor.indexOf('resource-combo') >= 0 ||
+							editor.indexOf('resource-code') >= 0 ||
 							editor.indexOf('image-selector') >= 0) {
 
 			field.userData = {
@@ -144,6 +145,10 @@ Things.DetailFormMetaBehavior = {
 
 			if(field.type == 'resource-combo') {
 				field.userData.delegateColumn = metaData.form_format ? metaData.form_format : 'id';
+			}
+
+			if(field.type == 'resource-code') {
+				field.userData.selectFields = metaData.form_format ? metaData.form_format : 'name,description';
 			}
 
 			if(field.type == 'resource-format-selector') {
@@ -220,7 +225,7 @@ Things.DetailFormMetaBehavior = {
 		if(typeof metaData.ext_field != 'undefined' && metaData.ext_field == true) {
 			field.userData = field.userData || {};
 			field.userData.extField = metaData.ext_field;
-		}		
+		}
 	},
 
 	/**
