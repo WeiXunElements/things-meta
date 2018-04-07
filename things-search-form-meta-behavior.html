@@ -130,7 +130,7 @@ Things.SearchFormMetaBehavior = {
 							editor.indexOf('resource-format-selector') >= 0 ||
 							editor.indexOf('resource-field') >= 0 ||
 							editor.indexOf('resource-combo') >= 0 ||
-						 editor.indexOf('resource-code') >= 0) {
+						  editor.indexOf('resource-code') >= 0) {
 
 			field.userData = {
 				resourceType : metaData.ref_type,
@@ -152,10 +152,6 @@ Things.SearchFormMetaBehavior = {
 			if(field.type == 'resource-combo') {
 				field.userData.delegateColumn = metaData.search_name ? metaData.search_name : 'id';
 			}
-
-			if(field.type == 'resource-code') {
-				field.userData.selectFields = metaData.search_name ? metaData.search_name : 'name,description';
-			}			
 
 			if(field.type == 'resource-format-selector') {
 				field.userData.delegateColumn = metaData.search_name ? metaData.search_name : 'name';

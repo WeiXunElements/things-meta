@@ -147,10 +147,6 @@ Things.DetailFormMetaBehavior = {
 				field.userData.delegateColumn = metaData.form_format ? metaData.form_format : 'id';
 			}
 
-			if(field.type == 'resource-code') {
-				field.userData.selectFields = metaData.form_format ? metaData.form_format : 'name,description';
-			}
-
 			if(field.type == 'resource-format-selector') {
 				field.userData.delegateColumn = metaData.form_format ? metaData.form_format : 'name';
 			}

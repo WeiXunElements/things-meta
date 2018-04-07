@@ -174,7 +174,6 @@ Things.GridMetaBehaviorImpl = {
           field.userData = { resourceType : 'code', resourceName : metaData.ref_name };
           if('resource-code' == editor) {
             field.userData.resourceType = 'entity';
-            field.userData.selectFields = metaData.grid_format ? metaData.grid_format : 'name,description';
           }
 
           if(metaData.code_list && metaData.code_list.length > 0) {
