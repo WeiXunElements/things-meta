@@ -129,7 +129,8 @@ Things.SearchFormMetaBehavior = {
 		} else if(editor.indexOf('resource-selector') >= 0 ||
 							editor.indexOf('resource-format-selector') >= 0 ||
 							editor.indexOf('resource-field') >= 0 ||
-							editor.indexOf('resource-combo') >= 0) {
+							editor.indexOf('resource-combo') >= 0 ||
+						  editor.indexOf('resource-code') >= 0) {
 
 			field.userData = {
 				resourceType : metaData.ref_type,
@@ -165,7 +166,7 @@ Things.SearchFormMetaBehavior = {
 			this._parseSearchValueRange(field, metaData.range_val, 'number');
 			//this._parseSearchValueRange(field, metaData.search_init_val, 'number');
 
-		} else if('date-from-to-picker' == editor || 'ranged-date-picker' == editor) {			
+		} else if('date-from-to-picker' == editor || 'ranged-date-picker' == editor) {
 			field.userData = { defaultRange : metaData.def_val, format : metaData.search_name };
 			this._parseSearchValueRange(field, metaData.search_init_val, 'date');
 			//this._parseSearchValueRange(field, metaData.range_val, 'date');

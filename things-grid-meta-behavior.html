@@ -168,10 +168,13 @@ Things.GridMetaBehaviorImpl = {
       var editor = metaData.grid_editor;
 
       if(editor) {
-        if('code-combo' == editor || 'code-column' == editor) {
-          field.editor = { type: 'list', domainOnly: true, editable: (editor == 'code-combo') };
+        if('code-combo' == editor || 'code-column' == editor || 'resource-code' == editor) {
+          field.editor = { type: 'list', domainOnly: true, editable: (editor != 'code-column') };
           field.lookupDisplay = true;
-          field.userData = { resourceName : metaData.ref_name };
+          field.userData = { resourceType : 'code', resourceName : metaData.ref_name };
+          if('resource-code' == editor) {
+            field.userData.resourceType = 'entity';
+          }
 
           /**
            * 2018.04.04 - Added by CuiGaung

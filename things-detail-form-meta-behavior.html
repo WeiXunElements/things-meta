@@ -115,6 +115,7 @@ Things.DetailFormMetaBehavior = {
 							editor.indexOf('view-field') >= 0 ||
 							editor.indexOf('resource-field') >= 0 ||
 							editor.indexOf('resource-combo') >= 0 ||
+							editor.indexOf('resource-code') >= 0 ||
 							editor.indexOf('image-selector') >= 0) {
 
 			field.userData = {
@@ -220,7 +221,7 @@ Things.DetailFormMetaBehavior = {
 		if(typeof metaData.ext_field != 'undefined' && metaData.ext_field == true) {
 			field.userData = field.userData || {};
 			field.userData.extField = metaData.ext_field;
-		}		
+		}
 	},
 
 	/**
