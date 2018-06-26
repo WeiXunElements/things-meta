@@ -174,11 +174,11 @@ Copyright © HatioLab Inc. All rights reserved.
 
                 if (editor) {
                     if ('code-combo' == editor || 'code-column' == editor || 'resource-code' == editor) {
+                        field.editable = (editor != 'code-column');
+                        field.readOnly = (editor == 'code-column');
                         field.editor = {
                             type: 'list',
-                            domainOnly: true,
-                            editable: (editor != 'code-column'),
-                            readOnly: (editor == 'code-column')
+                            domainOnly: true
                         };
                         field.lookupDisplay = true;
                         field.userData = {
@@ -249,6 +249,7 @@ Copyright © HatioLab Inc. All rights reserved.
                     } else if (editor.indexOf('resource-column') >= 0) {
                         me._newResourceColumn(metaData, field);
                         field.editable = false;
+                        field.readOnly = true;
 
                     } else if (editor.indexOf('resource-selector') >= 0) {
                         var originalField = field.name;
@@ -352,6 +353,7 @@ Copyright © HatioLab Inc. All rights reserved.
 
                     } else if (editor.indexOf('image-renderer') >= 0) {
                         field.editable = false;
+                        field.readOnly = true;
                         field.styles.iconIndex = 'image-renderer';
                         field.type = 'calced';
                         field.renderer = {
@@ -383,11 +385,12 @@ Copyright © HatioLab Inc. All rights reserved.
                         };
 
                     } else if (editor == 'hidden') {
+                        field.editable = false;
+                        field.readOnly = true;
                         field.width = 0;
-
                     } else if (editor == 'readonly') {
                         field.editable = false;
-
+                        field.readOnly = true;
                         if (metaData.grid_format) {
                             if (metaData.col_type == 'integer' || metaData.col_type == 'int' || metaData.col_type == 'long' || metaData.col_type == 'double' || metaData.col_type == 'float') {
                                 field.styles.numberFormat = metaData.grid_format;
