@@ -182,6 +182,7 @@ Things.DetailFormMetaBehavior = {
 
 		} else if('date-from-to-picker' == editor || 'ranged-date-picker' == editor) {
 			field.userData = { defaultRange : metaData.def_val };
+			if(metaData.form_format) field.userData.format = metaData.form_format;
 			this._parseFormValueRange(field, metaData.range_val, 'date');
 
 		} else if('date-picker' == editor) {
