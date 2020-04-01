@@ -297,7 +297,8 @@ Copyright © HatioLab Inc. All rights reserved.
                         field.editor = {
                             type: 'mask',
                             mask: '0000-00-00',
-                            datetimeFormat: 'yyyy-MM-dd'
+                            datetimeFormat: 'yyyy-MM-dd',
+                            includeLiterals: true
                         };
 
                     } else if (editor == 'time') {
@@ -307,7 +308,8 @@ Copyright © HatioLab Inc. All rights reserved.
                         field.editor = {
                             type: 'mask',
                             mask: '00:00:00',
-                            datetimeFormat: 'hh:mm:ss'
+                            datetimeFormat: 'hh:mm:ss',
+                            includeLiterals: true
                         };
 
                     } else if (editor == 'datetime') {
