@@ -101,7 +101,7 @@
       return searchMetaList.map(function (metaData) {
         var field = {
           name: metaData.name,
-          label: Things.DataGlobal.tt(metaData.term),
+          label: Things.DataGlobal.t(metaData.term),
           type: metaData.search_editor,
           tabindex: metaData.search_rank,
           op: metaData.search_oper ? metaData.search_oper : "eq",
