@@ -1,11 +1,11 @@
 <!--
 @license
-Copyright © HatioLab Inc. All rights reserved.
+Copyright © 2015-2021 Shenzhen Weixun All rights reserved.
 -->
-<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../polymer/polymer.html" />
 
-<link rel="import" href="../things-ajax/things-ajax.html">
-<link rel="import" href="things-entity-meta-behavior.html">
+<link rel="import" href="../things-ajax/things-ajax.html" />
+<link rel="import" href="things-entity-meta-behavior.html" />
 
 <!--
 ## Entity 기반의 ResourceSelector화면 구성을 위한 데이터를 셋업하기 위한 메타 정보용 컴포넌트.
@@ -36,27 +36,23 @@ Example:
 -->
 
 <dom-module id="things-entity-meta">
-	<template>
-		<things-ajax 
-			id="meta-ajax"
-			resource-url="{{entityMetaUrl}}"
-			resource-action="find"
-			last-response="{{metaData}}">
-		</things-ajax>
-	</template>
+  <template>
+    <things-ajax id="meta-ajax" resource-url="{{entityMetaUrl}}" resource-action="find" last-response="{{metaData}}">
+    </things-ajax>
+  </template>
 
-	<script>
-		Polymer({
-			is: 'things-entity-meta',
-			
-			behaviors: [ Things.EntityMetaBehavior ],
+  <script>
+    Polymer({
+      is: "things-entity-meta",
 
-			/**
-			 * 서버로 부터 설정한 Entity에 대한 메타 정보를 조회
-			 */
-			loadMeta: function() {
-				this.$['meta-ajax'].generateRequest();
-			}
-		});
-	</script>
+      behaviors: [Things.EntityMetaBehavior],
+
+      /**
+       * 서버로 부터 설정한 Entity에 대한 메타 정보를 조회
+       */
+      loadMeta: function () {
+        this.$["meta-ajax"].generateRequest();
+      },
+    });
+  </script>
 </dom-module>

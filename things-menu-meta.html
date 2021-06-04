@@ -1,11 +1,11 @@
 <!--
 @license
-Copyright © HatioLab Inc. All rights reserved.
+Copyright © 2015-2021 Shenzhen Weixun All rights reserved.
 -->
-<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../polymer/polymer.html" />
 
-<link rel="import" href="things-menu-meta-behavior.html">
-<link rel="import" href="../things-ajax/things-ajax.html">
+<link rel="import" href="things-menu-meta-behavior.html" />
+<link rel="import" href="../things-ajax/things-ajax.html" />
 
 <!--
 ## Menu 기반의 화면 구성을 위한 데이터를 셋업하기 위한 메타 정보용 컴포넌트.
@@ -32,21 +32,15 @@ Example:
 -->
 
 <dom-module id="things-menu-meta">
-	<template>
-		<things-ajax 
-			auto
-			id="menu-meta-ajax"
-			resource-url="{{menuMetaUrl}}"
-			last-response="{{metaData}}">
-		</things-ajax>
-	</template>
+  <template>
+    <things-ajax auto id="menu-meta-ajax" resource-url="{{menuMetaUrl}}" last-response="{{metaData}}"> </things-ajax>
+  </template>
 
-	<script>
-		Polymer({
-			is: 'things-menu-meta',
-			
-			behaviors: [ Things.MenuMetaBehavior ]
+  <script>
+    Polymer({
+      is: "things-menu-meta",
 
-		});
-	</script>
+      behaviors: [Things.MenuMetaBehavior],
+    });
+  </script>
 </dom-module>

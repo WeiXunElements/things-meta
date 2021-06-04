@@ -1,102 +1,101 @@
 <!--
 @license
-Copyright © HatioLab Inc. All rights reserved.
+Copyright © 2015-2021 Shenzhen Weixun All rights reserved.
 -->
-<!doctype html>
+<!DOCTYPE html>
 <html>
-
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes" />
     <title>things-meta Demo</title>
     <script src="../../webcomponentsjs/webcomponents-lite.min.js"></script>
-    <link rel="import" href="../elements.html">
-    <link rel="import" href="../../iron-demo-helpers/demo-snippet.html">
-    <link rel="import" href="../../iron-demo-helpers/demo-pages-shared-styles.html">
-    <link rel="import" href="../../things-setting/things-setting.html">
-    <link rel="import" href="../../things-spinner/things-spinner.html">
-    <link rel="import" href="../../paper-toast/paper-toast.html">
-    <link rel="import" href="../../iron-autogrow-textarea/iron-autogrow-textarea.html">
-    <link rel="import" href="../../paper-button/paper-button.html">
-</head>
+    <link rel="import" href="../elements.html" />
+    <link rel="import" href="../../iron-demo-helpers/demo-snippet.html" />
+    <link rel="import" href="../../iron-demo-helpers/demo-pages-shared-styles.html" />
+    <link rel="import" href="../../things-setting/things-setting.html" />
+    <link rel="import" href="../../things-spinner/things-spinner.html" />
+    <link rel="import" href="../../paper-toast/paper-toast.html" />
+    <link rel="import" href="../../iron-autogrow-textarea/iron-autogrow-textarea.html" />
+    <link rel="import" href="../../paper-button/paper-button.html" />
+  </head>
 
-<body unresolved>
+  <body unresolved>
     <demo-snippet class="centered-demo">
-        <template>
-            <template is="dom-bind" id="content">
-                <things-setting id="setting"></things-setting>
+      <template>
+        <template is="dom-bind" id="content">
+          <things-setting id="setting"></things-setting>
 
-                <things-resource-meta 
-                    id="resourceMeta" 
-                    resource-type="Role" 
-                    sort-fields="{{sortFields}}" 
-                    select-fields="{{selectFields}}" 
-                    search-form-fields="{{searchFormFields}}" 
-                    resource-form-fields="{{resourceFormFields}}" 
-                    grid-model="{{gridModel}}" 
-                    grid-columns="{{gridColumns}}">
-                </things-resource-meta>
+          <things-resource-meta
+            id="resourceMeta"
+            resource-type="Role"
+            sort-fields="{{sortFields}}"
+            select-fields="{{selectFields}}"
+            search-form-fields="{{searchFormFields}}"
+            resource-form-fields="{{resourceFormFields}}"
+            grid-model="{{gridModel}}"
+            grid-columns="{{gridColumns}}"
+          >
+          </things-resource-meta>
 
-                <div>
-                    <label>sortFields</label>
-                    <iron-autogrow-textarea id="sortFields"></iron-autogrow-textarea>
-                </div>
-                <div>
-                    <label>selectFields</label>
-                    <iron-autogrow-textarea id="selectFields"></iron-autogrow-textarea>
-                </div>
-                <div>
-                    <label>searchFormFields</label>
-                    <iron-autogrow-textarea id="searchFormFields"></iron-autogrow-textarea>
-                </div>
-                <div>
-                    <label>resourceFormFields</label>
-                    <iron-autogrow-textarea id="resourceFormFields"></iron-autogrow-textarea>
-                </div>
-                <div>
-                    <label>gridModel</label>
-                    <iron-autogrow-textarea id="gridModel"></iron-autogrow-textarea>
-                </div>
-                <div>
-                    <label>gridColumns</label>
-                    <iron-autogrow-textarea id="gridColumns"></iron-autogrow-textarea>
-                </div>
+          <div>
+            <label>sortFields</label>
+            <iron-autogrow-textarea id="sortFields"></iron-autogrow-textarea>
+          </div>
+          <div>
+            <label>selectFields</label>
+            <iron-autogrow-textarea id="selectFields"></iron-autogrow-textarea>
+          </div>
+          <div>
+            <label>searchFormFields</label>
+            <iron-autogrow-textarea id="searchFormFields"></iron-autogrow-textarea>
+          </div>
+          <div>
+            <label>resourceFormFields</label>
+            <iron-autogrow-textarea id="resourceFormFields"></iron-autogrow-textarea>
+          </div>
+          <div>
+            <label>gridModel</label>
+            <iron-autogrow-textarea id="gridModel"></iron-autogrow-textarea>
+          </div>
+          <div>
+            <label>gridColumns</label>
+            <iron-autogrow-textarea id="gridColumns"></iron-autogrow-textarea>
+          </div>
 
-                <br/>
+          <br />
 
-                <paper-button id="button" raised>Show Meta</paper-button>
+          <paper-button id="button" raised>Show Meta</paper-button>
 
-                <things-spinner id="spinner"></things-spinner>
+          <things-spinner id="spinner"></things-spinner>
 
-                <paper-toast id="toast" class="Toast" duration="8000"></paper-toast>
+          <paper-toast id="toast" class="Toast" duration="8000"></paper-toast>
 
-                <script type="text/javascript">
-                    var app = document.querySelector('#content');
-                    var setting = document.querySelector('#setting');
+          <script type="text/javascript">
+            var app = document.querySelector("#content");
+            var setting = document.querySelector("#setting");
 
-                    window.addEventListener('WebComponentsReady', function() {
-                        if (setting) {
-                            setting.set('globals.baseUrl', 'http://factory.hatiolab.com/rest');
-                        }
+            window.addEventListener("WebComponentsReady", function () {
+              if (setting) {
+                setting.set("globals.baseUrl", "http://xmes.szweixun.com.cn/rest");
+              }
 
-                        if (setting.globals.baseUrl) {
-                            var resourceMeta = document.querySelector('#resourceMeta');
-                            resourceMeta.loadMeta();
-                        }
-                    });
+              if (setting.globals.baseUrl) {
+                var resourceMeta = document.querySelector("#resourceMeta");
+                resourceMeta.loadMeta();
+              }
+            });
 
-                    app.$.button.addEventListener("tap", function() {
-                        app.$.sortFields.value = JSON.stringify(app.$.resourceMeta.sortFields);
-                        app.$.selectFields.value = JSON.stringify(app.$.resourceMeta.selectFields);
-                        app.$.searchFormFields.value = JSON.stringify(app.$.resourceMeta.searchFormFields);
-                        app.$.resourceFormFields.value = JSON.stringify(app.$.resourceMeta.resourceFormFields);
-                        app.$.gridModel.value = JSON.stringify(app.$.resourceMeta.gridModel);
-                        app.$.gridColumns.value = JSON.stringify(app.$.resourceMeta.gridColumns);
-                    });
-                </script>
-            </template>
+            app.$.button.addEventListener("tap", function () {
+              app.$.sortFields.value = JSON.stringify(app.$.resourceMeta.sortFields);
+              app.$.selectFields.value = JSON.stringify(app.$.resourceMeta.selectFields);
+              app.$.searchFormFields.value = JSON.stringify(app.$.resourceMeta.searchFormFields);
+              app.$.resourceFormFields.value = JSON.stringify(app.$.resourceMeta.resourceFormFields);
+              app.$.gridModel.value = JSON.stringify(app.$.resourceMeta.gridModel);
+              app.$.gridColumns.value = JSON.stringify(app.$.resourceMeta.gridColumns);
+            });
+          </script>
         </template>
+      </template>
     </demo-snippet>
-</body>
-
+  </body>
 </html>

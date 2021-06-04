@@ -1,84 +1,77 @@
 <!--
 @license
-Copyright © HatioLab Inc. All rights reserved.
+Copyright © 2015-2021 Shenzhen Weixun All rights reserved.
 -->
-<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../polymer/polymer.html" />
 
-<link rel="import" href="./things-detail-form-meta-behavior.html">
+<link rel="import" href="./things-detail-form-meta-behavior.html" />
 
 <script>
+  window.Things = window.Things || {};
 
-window.Things = window.Things || {};
+  /**
+   * ## DiyForm 기반의 폼 화면 구성을 위해 폼 관련 메타 정보를 제공하는 Behavior
+   * DiyForm 기반의 폼 구성에 필요한 모델 정보를 제공한다.<br/>
+   * 서버로 부터 받아온 DiyForm 메타 정보를 상세 폼 구성을 위한 구체적인 정보로 변환하여 폼 구성시 필요한 폼 메타 데이터를 제공한다.
+   *
+   * @polymerBehavior Things.DiyFormMetaBehavior
+   */
+  Things.DiyFormMetaBehaviorImpl = {
+    properties: {
+      /**
+       * DiyForm ID
+       */
+      diyFormId: {
+        type: String,
+      },
 
-/**
- * ## DiyForm 기반의 폼 화면 구성을 위해 폼 관련 메타 정보를 제공하는 Behavior
- * DiyForm 기반의 폼 구성에 필요한 모델 정보를 제공한다.<br/>
- * 서버로 부터 받아온 DiyForm 메타 정보를 상세 폼 구성을 위한 구체적인 정보로 변환하여 폼 구성시 필요한 폼 메타 데이터를 제공한다.
- *
- * @polymerBehavior Things.DiyFormMetaBehavior
- */
-Things.DiyFormMetaBehaviorImpl = {
+      /**
+       * DiyForm 기반의 폼 구성을 위해 필요한 메타 데이터를 조회하기 위한 URL
+       */
+      formMetaUrl: {
+        type: String,
+        computed: "_computeFormMetaUrl(diyFormId)",
+      },
 
-	properties: {
-		/**
-		 * DiyForm ID
-		 */
-		diyFormId: {
-			type: String
-		},
+      /**
+       * Diy Form의 서버 측 메타 데이터
+       */
+      metaData: {
+        type: Array,
+        observer: "parseMetaData",
+      },
 
-		/**
-		 * DiyForm 기반의 폼 구성을 위해 필요한 메타 데이터를 조회하기 위한 URL
-		 */
-		formMetaUrl: {
-			type: String,
-			computed: '_computeFormMetaUrl(diyFormId)'
-		},
+      /**
+       * 변환된 DiyForm 기반의 폼 구성을 위해 필요한 클라이언트 측 폼 메타 정보
+       */
+      formFields: {
+        type: Array,
+        notify: true,
+      },
+    },
 
-		/**
-		 * Diy Form의 서버 측 메타 데이터 
-		 */
-		metaData: {
-			type: Array,
-			observer: 'parseMetaData'
-		},
+    /**
+     * diyFormId로 부터 Diy Form 메타 데이터 조회 URL을 생성
+     *
+     * @param {String} diyForm ID
+     * @return {String} Diy Form 메타 데이터 조회 URL
+     */
+    _computeFormMetaUrl: function (diyFormId) {
+      return "view_columns/DiyForm/" + diyFormId + "/meta";
+    },
 
-		/**
-		 * 변환된 DiyForm 기반의 폼 구성을 위해 필요한 클라이언트 측 폼 메타 정보 
-		 */
-		formFields: {
-			type: Array,
-			notify: true
-		}
-	},
+    /**
+     * 서버 측 DiyForm 메타 데이터로 부터 클라이언트 측 폼 구성을 위한 메타 정보로 변환한다.
+     *
+     * @param {Array} metaData 서버 측 DiyForm 메타 데이터
+     */
+    parseMetaData: function (metaData) {
+      if (!metaData || metaData.length == 0) return;
 
-	/**
-	 * diyFormId로 부터 Diy Form 메타 데이터 조회 URL을 생성
-	 *
-	 * @param {String} diyForm ID
-	 * @return {String} Diy Form 메타 데이터 조회 URL
-	 */
-	_computeFormMetaUrl: function(diyFormId) {
-		return 'view_columns/DiyForm/' + diyFormId + '/meta';
-	},
+      // 1. Parse Form Fields - detail form
+      this.formFields = this._parseResourceFormFields(metaData.columns);
+    },
+  };
 
-	/**
-	 * 서버 측 DiyForm 메타 데이터로 부터 클라이언트 측 폼 구성을 위한 메타 정보로 변환한다.
-	 *
-	 * @param {Array} metaData 서버 측 DiyForm 메타 데이터
-	 */
-	parseMetaData: function(metaData) {
-		if(!metaData || metaData.length == 0) return;
-
-		// 1. Parse Form Fields - detail form
-		this.formFields = this._parseResourceFormFields(metaData.columns);
-	}	
-
-};
-
-Things.DiyFormMetaBehavior = [
-	Things.DiyFormMetaBehaviorImpl,
-	Things.DetailFormMetaBehavior
-];
-
+  Things.DiyFormMetaBehavior = [Things.DiyFormMetaBehaviorImpl, Things.DetailFormMetaBehavior];
 </script>

@@ -1,11 +1,11 @@
 <!--
 @license
-Copyright © HatioLab Inc. All rights reserved.
+Copyright © 2015-2021 Shenzhen Weixun All rights reserved.
 -->
-<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../polymer/polymer.html" />
 
-<link rel="import" href="things-menu-detail-meta-behavior.html">
-<link rel="import" href="../things-ajax/things-ajax.html">
+<link rel="import" href="things-menu-detail-meta-behavior.html" />
+<link rel="import" href="../things-ajax/things-ajax.html" />
 
 <!--
 ## Menu Detail 기반의 상세 화면 구성을 위한 데이터를 셋업하기 위한 메타 정보용 컴포넌트.
@@ -19,21 +19,16 @@ Detail 화면에 대한 구성만 했다면 Detail Form 혹은 Detail Grid화면
 -->
 
 <dom-module id="things-menu-detail-meta">
-	<template>
-		<things-ajax 
-			auto
-			id="things-menu-detail-meta"
-			resource-url="{{menuDetailMetaUrl}}"
-			last-response="{{metaData}}">
-		</things-ajax>
-	</template>
+  <template>
+    <things-ajax auto id="things-menu-detail-meta" resource-url="{{menuDetailMetaUrl}}" last-response="{{metaData}}">
+    </things-ajax>
+  </template>
 
-	<script>
-		Polymer({
-			is: 'things-menu-detail-meta',
-			
-			behaviors: [ Things.MenuDetailMetaBehavior ]
+  <script>
+    Polymer({
+      is: "things-menu-detail-meta",
 
-		});
-	</script>
+      behaviors: [Things.MenuDetailMetaBehavior],
+    });
+  </script>
 </dom-module>

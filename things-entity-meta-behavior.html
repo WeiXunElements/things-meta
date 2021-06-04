@@ -1,119 +1,115 @@
 <!--
 @license
-Copyright © HatioLab Inc. All rights reserved.
+Copyright © 2015-2021 Shenzhen Weixun All rights reserved.
 -->
-<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../polymer/polymer.html" />
 
-<link rel="import" href="things-search-form-meta-behavior.html">
-<link rel="import" href="things-detail-form-meta-behavior.html">
-<link rel="import" href="things-grid-meta-behavior.html">
+<link rel="import" href="things-search-form-meta-behavior.html" />
+<link rel="import" href="things-detail-form-meta-behavior.html" />
+<link rel="import" href="things-grid-meta-behavior.html" />
 
 <script>
+  window.Things = window.Things || {};
 
-window.Things = window.Things || {};
+  /**
+   * ## Entity 기반의 ResourceSelector화면 구성을 위한 메타 정보를 제공하는 Behavior
+   * Entity 메타 데이터를 조회하는 URL 구성과 메타 데이터를 받은 후 검색 폼, 그리드, 디테일 폼에 필요한 모델 정보를 제공한다.
+   *
+   * @polymerBehavior Things.EntityMetaBehavior
+   */
+  Things.EntityMetaBehaviorImpl = {
+    properties: {
+      /**
+       * Entity 명
+       * ex) User resource라고 하면 User
+       */
+      resourceName: {
+        type: String,
+      },
 
-/**
- * ## Entity 기반의 ResourceSelector화면 구성을 위한 메타 정보를 제공하는 Behavior
- * Entity 메타 데이터를 조회하는 URL 구성과 메타 데이터를 받은 후 검색 폼, 그리드, 디테일 폼에 필요한 모델 정보를 제공한다.
- *
- * @polymerBehavior Things.EntityMetaBehavior
- */
-Things.EntityMetaBehaviorImpl = {
+      /**
+       * Entity 조회를 위한 대표 URL
+       */
+      resourceUrl: {
+        type: String,
+      },
 
-	properties: {
-		/**
-		 * Entity 명
-		 * ex) User resource라고 하면 User
-		 */
-		resourceName: {
-			type: String
-		},
+      /**
+       * 화면 구성을 위해 필요한 메타 데이터를 조회하기 위한 URL <br/>
+       * resourceName 즉 Entity 명이 결정되면 이 URL도 결정이 된다.
+       */
+      entityMetaUrl: {
+        type: String,
+        computed: "_computeEntityMetaUrl(resourceName)",
+      },
 
-		/**
-		 * Entity 조회를 위한 대표 URL
-		 */
-		resourceUrl: {
-			type: String
-		},
+      /**
+       * 서버로 부터 조회한 Entity Object
+       */
+      entity: {
+        type: Object,
+      },
 
-		/**
-		 * 화면 구성을 위해 필요한 메타 데이터를 조회하기 위한 URL <br/>
-		 * resourceName 즉 Entity 명이 결정되면 이 URL도 결정이 된다.
-		 */
-		entityMetaUrl: {
-			type: String,
-			computed: '_computeEntityMetaUrl(resourceName)'
-		},
+      /**
+       * 서버로 부터 조회한 Entity의 메타 데이터 <br/>
+       * 서버로 부터 응답받은 메타 정보를 파싱하여 ResourceSelector 화면구성에 필요한 searchFromFields, resourceFormFields, gridModel, gridColumns, selectFields, sortFields 데이터를 설정한다.
+       */
+      metaData: {
+        type: Object,
+        observer: "parseMetaData",
+      },
 
-		/**
-		 * 서버로 부터 조회한 Entity Object
-		 */
-		entity: {
-			type: Object
-		},
-
-		/**
-		 * 서버로 부터 조회한 Entity의 메타 데이터 <br/>
-		 * 서버로 부터 응답받은 메타 정보를 파싱하여 ResourceSelector 화면구성에 필요한 searchFromFields, resourceFormFields, gridModel, gridColumns, selectFields, sortFields 데이터를 설정한다.
-		 */
-		metaData: {
-			type: Object,
-			observer: 'parseMetaData'
-		}
+      /**
+       * 서버로 부터 응답받은 메타 정보를 파싱하여 ResourceSelector 화면 구성을 위해 필요한 데이터가 모두 설정되었다 (즉 ResourceSelector 화면 구성에 필요한 메타 데이터가 모두 설정이 완료되었다)는 이벤트
+       *
+       * @event things-entity-meta-configured
+       */
+    },
 
     /**
-     * 서버로 부터 응답받은 메타 정보를 파싱하여 ResourceSelector 화면 구성을 위해 필요한 데이터가 모두 설정되었다 (즉 ResourceSelector 화면 구성에 필요한 메타 데이터가 모두 설정이 완료되었다)는 이벤트 
+     * resourceName으로 부터 화면 구성 메타 데이터 조회를 위한 메타 URL을 생성
      *
-     * @event things-entity-meta-configured
+     * @param {String} resourceName Entity 명
+     * @return {String} 화면 구성 메타 데이터 조회 URL
      */
-	},
+    _computeEntityMetaUrl: function (resourceName) {
+      return "entities/" + resourceName + "/meta";
+    },
 
-	/**
-	 * resourceName으로 부터 화면 구성 메타 데이터 조회를 위한 메타 URL을 생성
-	 *
-	 * @param {String} resourceName Entity 명 
-	 * @return {String} 화면 구성 메타 데이터 조회 URL
-	 */
-	_computeEntityMetaUrl: function(resourceName) {
-		return 'entities/' + resourceName + '/meta';
-	},
+    /**
+     * MetaData를 파싱한다.
+     *
+     * @param {Object} metaData ResourceSelector 화면 구성을 위해 서버로 부터 응답받은 메타 정보를 파싱한 객체
+     */
+    parseMetaData: function (metaData) {
+      if (!metaData) return;
 
-	/**
-	 * MetaData를 파싱한다.
-	 *
-	 * @param {Object} metaData ResourceSelector 화면 구성을 위해 서버로 부터 응답받은 메타 정보를 파싱한 객체 
-	 */
-	parseMetaData: function(metaData) {
-		if(!metaData) return;
+      var entityColumns = metaData.items ? metaData.items : [];
+      delete metaData["columns"];
+      this.entity = metaData;
+      this.resourceUrl = this.entity.search_url;
 
-		var entityColumns = metaData.items ? metaData.items : [];
-		delete metaData['columns'];
-		this.entity = metaData;
-		this.resourceUrl = this.entity.search_url;
+      // 1. Parse Sort Fields - search form
+      this.sortFields = this._parseSortFields(entityColumns);
+      // 2. Parse Select Fields - search form
+      this.selectFields = this._parseSelectFields(entityColumns);
+      // 3. Parse Search Form Fields - search form
+      this.searchFormFields = this._parseSearchFormFields(entityColumns);
+      // 4. Parse Resource Form Fields - detail form
+      this.resourceFormFields = this._parseResourceFormFields(entityColumns);
+      // 5. Parse Grid Models - grid form
+      this.gridModel = this._parseGridModel(entityColumns);
+      // 6. Parse Grid Columns - grid form
+      this.gridColumns = this._parseGridColumns(entityColumns);
 
-		// 1. Parse Sort Fields - search form
-		this.sortFields = this._parseSortFields(entityColumns);
-		// 2. Parse Select Fields - search form
-		this.selectFields = this._parseSelectFields(entityColumns);
-		// 3. Parse Search Form Fields - search form
-		this.searchFormFields = this._parseSearchFormFields(entityColumns);
-		// 4. Parse Resource Form Fields - detail form
-		this.resourceFormFields = this._parseResourceFormFields(entityColumns);
-		// 5. Parse Grid Models - grid form
-		this.gridModel = this._parseGridModel(entityColumns);
-		// 6. Parse Grid Columns - grid form
-		this.gridColumns = this._parseGridColumns(entityColumns);
+      this.fire("things-entity-meta-configured", null);
+    },
+  };
 
-		this.fire('things-entity-meta-configured', null);
-	}
-
-};
-
-Things.EntityMetaBehavior = [
-	Things.EntityMetaBehaviorImpl,
-	Things.SearchFormMetaBehavior,
-	Things.DetailFormMetaBehavior,
-	Things.GridMetaBehavior
-];
-
+  Things.EntityMetaBehavior = [
+    Things.EntityMetaBehaviorImpl,
+    Things.SearchFormMetaBehavior,
+    Things.DetailFormMetaBehavior,
+    Things.GridMetaBehavior,
+  ];
 </script>

@@ -1,93 +1,86 @@
 <!--
 @license
-Copyright © HatioLab Inc. All rights reserved.
+Copyright © 2015-2021 Shenzhen Weixun All rights reserved.
 -->
-<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../polymer/polymer.html" />
 
-<link rel="import" href="./things-grid-meta-behavior.html">
+<link rel="import" href="./things-grid-meta-behavior.html" />
 
 <script>
+  window.Things = window.Things || {};
 
-window.Things = window.Things || {};
+  /**
+   * ## DiyGrid 기반의 그리드 화면 구성을 위해 그리드 관련 메타 데이터를 제공하는 Behavior
+   * DiyGrid 기반의 그리드 구성에 필요한 모델 정보를 제공한다.<br/>
+   * 서버로 부터 받아온 DiyGrid 메타 정보를 그리드 구성을 위한 구체적인 정보로 변환하여 그리드 구성시 필요한 그리 메타 데이터를 제공한다.
+   *
+   * @polymerBehavior Things.DiyGridMetaBehavior
+   */
+  Things.DiyGridMetaBehaviorImpl = {
+    properties: {
+      /**
+       * DiyGrid ID
+       */
+      diyGridId: {
+        type: String,
+      },
 
-/**
- * ## DiyGrid 기반의 그리드 화면 구성을 위해 그리드 관련 메타 데이터를 제공하는 Behavior
- * DiyGrid 기반의 그리드 구성에 필요한 모델 정보를 제공한다.<br/>
- * 서버로 부터 받아온 DiyGrid 메타 정보를 그리드 구성을 위한 구체적인 정보로 변환하여 그리드 구성시 필요한 그리 메타 데이터를 제공한다.
- *
- * @polymerBehavior Things.DiyGridMetaBehavior
- */
-Things.DiyGridMetaBehaviorImpl = {
+      /**
+       * 화면 구성을 위해 필요한 메뉴 메타 데이터를 조회하기 위한 URL
+       */
+      gridMetaUrl: {
+        type: String,
+        computed: "_computeGridMetaUrl(diyGridId)",
+      },
 
-	properties: {
-		/**
-		 * DiyGrid ID
-		 */
-		diyGridId: {
-			type: String
-		},
+      /**
+       * Menu meta data - gridModel, gridColumns, buttons 등을 파싱한다.
+       */
+      metaData: {
+        type: Array,
+        observer: "parseMetaData",
+      },
+    },
 
-		/**
-		 * 화면 구성을 위해 필요한 메뉴 메타 데이터를 조회하기 위한 URL
-		 */
-		gridMetaUrl: {
-			type: String,
-			computed: '_computeGridMetaUrl(diyGridId)'
-		},
+    /**
+     * diyGridId로 부터 Diy Grid의 메타 데이터 조회 URL을 생성
+     *
+     * @param {String} diyGridId
+     * @return {String} Get DiyGrid Meta URL
+     */
+    _computeGridMetaUrl: function (diyGridId) {
+      return "view_columns/DiyGrid/" + diyGridId + "/meta";
+    },
 
-		/**
-		 * Menu meta data - gridModel, gridColumns, buttons 등을 파싱한다. 
-		 */
-		metaData: {
-			type: Array,
-			observer: 'parseMetaData'
-		}
-	},
+    /**
+     * meta data를 파싱한다.
+     *
+     * @param {Array} metaData
+     */
+    parseMetaData: function (metaData) {
+      if (!metaData) return;
 
-	/**
-	 * diyGridId로 부터 Diy Grid의 메타 데이터 조회 URL을 생성
-	 *
-	 * @param {String} diyGridId
-	 * @return {String} Get DiyGrid Meta URL
-	 */
-	_computeGridMetaUrl: function(diyGridId) {
-		return 'view_columns/DiyGrid/' + diyGridId + '/meta';
-	},
+      // 1. 메타 데이터가 Object로 넘어올 경우
+      if (metaData.columns) {
+        // 1. Parse Grid Models
+        this.gridModel = this._parseGridModel(metaData.columns);
+        // 2. Parse Grid Columns
+        this.gridColumns = this._parseGridColumns(metaData.columns);
 
-	/**
-	 * meta data를 파싱한다.
-	 *
-	 * @param {Array} metaData
-	 */
-	parseMetaData: function(metaData) {
-		if(!metaData) return;
+        // 2. 메타 데이터가 Text로 넘어올 경우
+      } else {
+        var metaAll = JSONfn.parse(metaData.text);
+        this.gridModel = metaAll.model;
+        metaAll.columns.forEach(function (column) {
+          if (column.header && column.header.text) {
+            column.header.text = Things.DataGlobal.t(column.header.text);
+          }
+        });
+        this.gridColumns = metaAll.columns;
+        this.gridConfig = metaAll.config;
+      }
+    },
+  };
 
-		// 1. 메타 데이터가 Object로 넘어올 경우
-		if(metaData.columns) {
-			// 1. Parse Grid Models
-			this.gridModel = this._parseGridModel(metaData.columns);
-			// 2. Parse Grid Columns
-			this.gridColumns = this._parseGridColumns(metaData.columns);
-
-		// 2. 메타 데이터가 Text로 넘어올 경우
-		} else {
-			var metaAll = JSONfn.parse(metaData.text);
-			this.gridModel = metaAll.model;
-			metaAll.columns.forEach(function(column) {
-				if(column.header && column.header.text) { 
-					column.header.text = Things.DataGlobal.t(column.header.text); 
-				}
-			});
-			this.gridColumns = metaAll.columns;
-			this.gridConfig = metaAll.config;
-		}
-	}	
-
-};
-
-Things.DiyGridMetaBehavior = [
-	Things.DiyGridMetaBehaviorImpl,
-	Things.GridMetaBehavior
-];
-
+  Things.DiyGridMetaBehavior = [Things.DiyGridMetaBehaviorImpl, Things.GridMetaBehavior];
 </script>

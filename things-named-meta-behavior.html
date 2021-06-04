@@ -1,118 +1,114 @@
 <!--
 @license
-Copyright © HatioLab Inc. All rights reserved.
+Copyright © 2015-2021 Shenzhen Weixun All rights reserved.
 -->
-<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../polymer/polymer.html" />
 
-<link rel="import" href="things-search-form-meta-behavior.html">
-<link rel="import" href="things-detail-form-meta-behavior.html">
-<link rel="import" href="things-grid-meta-behavior.html">
+<link rel="import" href="things-search-form-meta-behavior.html" />
+<link rel="import" href="things-detail-form-meta-behavior.html" />
+<link rel="import" href="things-grid-meta-behavior.html" />
 
 <script>
+  window.Things = window.Things || {};
 
-window.Things = window.Things || {};
+  /**
+   * ## Menu 이름 기반의 화면 구성을 위한 메타 정보를 제공하는 Behavior
+   * Menu 이름으로 메뉴 메타 데이터를 조회하는 URL 구성과 메타 데이터를 받은 후 검색 폼, 그리드, 디테일 폼에 필요한 모델 정보를 제공한다.
+   *
+   * @polymerBehavior Things.NamedMetaBehavior
+   */
+  Things.NamedMetaBehaviorImpl = {
+    properties: {
+      /**
+       * 메뉴명
+       */
+      resourceName: {
+        type: String,
+      },
 
-/**
- * ## Menu 이름 기반의 화면 구성을 위한 메타 정보를 제공하는 Behavior
- * Menu 이름으로 메뉴 메타 데이터를 조회하는 URL 구성과 메타 데이터를 받은 후 검색 폼, 그리드, 디테일 폼에 필요한 모델 정보를 제공한다.
- *
- * @polymerBehavior Things.NamedMetaBehavior
- */
-Things.NamedMetaBehaviorImpl = {
+      /**
+       * 화면 대표 URL
+       */
+      resourceUrl: {
+        type: String,
+      },
 
-	properties: {
-		/**
-		 * 메뉴명
-		 */
-		resourceName: {
-			type: String
-		},
+      /**
+       * 화면 구성을 위해 필요한 메뉴 메타 데이터를 조회하기 위한 URL
+       */
+      menuMetaUrl: {
+        type: String,
+        computed: "_computeMenuMetaUrl(resourceName)",
+      },
 
-		/**
-		 * 화면 대표 URL
-		 */
-		resourceUrl: {
-			type: String
-		},
+      /**
+       * 서버로 부터 조회한 Menu의 메타 데이터 <br/>
+       * 서버로 부터 응답받은 메타 정보를 파싱하여 Menu 기반의 화면구성에 필요한 searchFromFields, resourceFormFields, gridModel, gridColumns, selectFields, sortFields 데이터를 설정한다.
+       */
+      metaData: {
+        type: Array,
+        observer: "parseMetaData",
+      },
 
-		/**
-		 * 화면 구성을 위해 필요한 메뉴 메타 데이터를 조회하기 위한 URL
-		 */
-		menuMetaUrl: {
-			type: String,
-			computed: '_computeMenuMetaUrl(resourceName)'
-		},		
+      /**
+       * Menu 정보
+       */
+      menuInfo: {
+        type: Object,
+      },
 
-		/**
-		 * 서버로 부터 조회한 Menu의 메타 데이터 <br/>
-		 * 서버로 부터 응답받은 메타 정보를 파싱하여 Menu 기반의 화면구성에 필요한 searchFromFields, resourceFormFields, gridModel, gridColumns, selectFields, sortFields 데이터를 설정한다.
-		 */
-		metaData: {
-			type: Array,
-			observer: 'parseMetaData'
-		},
-
-		/**
-		 * Menu 정보 
-		 */
-		menuInfo: {
-			type: Object
-		}
+      /**
+       * 서버로 부터 응답받은 메타 정보를 파싱하여 Menu 이름 기반의 화면 구성을 위해 필요한 데이터가 모두 설정되었다 (즉 Menu 이름 기반의 화면 구성에 필요한 메타 데이터가 모두 설정이 완료되었다)는 이벤트
+       *
+       * @event things-named-menu-meta-configured
+       */
+    },
 
     /**
-     * 서버로 부터 응답받은 메타 정보를 파싱하여 Menu 이름 기반의 화면 구성을 위해 필요한 데이터가 모두 설정되었다 (즉 Menu 이름 기반의 화면 구성에 필요한 메타 데이터가 모두 설정이 완료되었다)는 이벤트 
+     * 메뉴 이름으로 메뉴 메타 정보를 조회하기 위한 URL 생성
      *
-     * @event things-named-menu-meta-configured
-     */		
-	},
+     * @param {String} resourceName 메뉴 이름
+     * @return {String} 메뉴 이름으로 메뉴 메타 정보를 조회하기 위한 URL
+     */
+    _computeMenuMetaUrl: function (resourceName) {
+      return "menus/" + resourceName + "/named_meta";
+    },
 
-	/**
-	 * 메뉴 이름으로 메뉴 메타 정보를 조회하기 위한 URL 생성
-	 *
-	 * @param {String} resourceName 메뉴 이름 
-	 * @return {String} 메뉴 이름으로 메뉴 메타 정보를 조회하기 위한 URL
-	 */
-	_computeMenuMetaUrl: function(resourceName) {
-		return 'menus/' + resourceName + '/named_meta';
-	},
+    /**
+     * 서버로 부터 응답받은 메타 정보를 파싱하여 Menu 이름 기반의 화면 구성을 위해 필요한 데이터로 변환한다.
+     *
+     * @param {Object} metaData 서버로 부터 응답받은 메타 정보
+     */
+    parseMetaData: function (metaData) {
+      if (!metaData || metaData.length == 0) return;
 
-	/**
-	 * 서버로 부터 응답받은 메타 정보를 파싱하여 Menu 이름 기반의 화면 구성을 위해 필요한 데이터로 변환한다.
-	 *
-	 * @param {Object} metaData 서버로 부터 응답받은 메타 정보
-	 */
-	parseMetaData: function(metaData) {
-		if(!metaData || metaData.length == 0) return;
+      // 0. Menu Information
+      this.menuInfo = metaData.menu;
+      this.resourceUrl = this.menuInfo.resource_url;
 
-		// 0. Menu Information
-		this.menuInfo = metaData.menu;
-		this.resourceUrl = this.menuInfo.resource_url;
+      // 1. Buttons
+      this.buttons = this._parseButtons(metaData.buttons);
+      // 2. Parse Sort Fields - search form
+      this.sortFields = this._parseSortFields(metaData.columns);
+      // 3. Parse Select Fields - search form
+      this.selectFields = this._parseSelectFields(metaData.columns);
+      // 4. Parse Search Form Fields - search form
+      this.searchFormFields = this._parseSearchFormFields(metaData.columns);
+      // 5. Parse Resource Form Fields - detail form
+      this.resourceFormFields = this._parseResourceFormFields(metaData.columns);
+      // 6. Parse Grid Models - grid form
+      this.gridModel = this._parseGridModel(metaData.columns);
+      // 7. Parse Grid Columns - grid form
+      this.gridColumns = this._parseGridColumns(metaData.columns);
 
-		// 1. Buttons
-		this.buttons = this._parseButtons(metaData.buttons);
-		// 2. Parse Sort Fields - search form
-		this.sortFields = this._parseSortFields(metaData.columns);
-		// 3. Parse Select Fields - search form
-		this.selectFields = this._parseSelectFields(metaData.columns);
-		// 4. Parse Search Form Fields - search form
-		this.searchFormFields = this._parseSearchFormFields(metaData.columns);
-		// 5. Parse Resource Form Fields - detail form
-		this.resourceFormFields = this._parseResourceFormFields(metaData.columns);
-		// 6. Parse Grid Models - grid form
-		this.gridModel = this._parseGridModel(metaData.columns);
-		// 7. Parse Grid Columns - grid form
-		this.gridColumns = this._parseGridColumns(metaData.columns);
+      this.fire("things-named-menu-meta-configured", null);
+    },
+  };
 
-		this.fire('things-named-menu-meta-configured', null);
-	}	
-
-};
-
-Things.NamedMetaBehavior = [
-	Things.NamedMetaBehaviorImpl,
-	Things.SearchFormMetaBehavior,
-	Things.DetailFormMetaBehavior,
-	Things.GridMetaBehavior
-];
-
+  Things.NamedMetaBehavior = [
+    Things.NamedMetaBehaviorImpl,
+    Things.SearchFormMetaBehavior,
+    Things.DetailFormMetaBehavior,
+    Things.GridMetaBehavior,
+  ];
 </script>
