@@ -1,6 +1,6 @@
 {
     "name": "things-meta",
-    "version": "v2.2.16",
+    "version": "v2.2.17",
     "authors": [
         "Shenzhen Weixun"
     ],
@@ -17,16 +17,16 @@
     ],
     "dependencies": {
         "polymer": "Polymer/polymer#^1.2.0",
-        "things-msg-box-behavior": "ThingsElements/things-msg-box-behavior",
-        "things-ajax": "ThingsElements/things-ajax"
+        "things-msg-box-behavior": "WeiXunElements/things-msg-box-behavior",
+        "things-ajax": "WeiXunElements/things-ajax"
     },
     "devDependencies": {
         "iron-component-page": "PolymerElements/iron-component-page#^1.0.0",
         "web-component-tester": "^4.0.0",
         "iron-demo-helpers": "^1.2.3",
         "iron-autogrow-textarea": "^1.0.12",
-        "things-setting": "ThingsElements/things-setting",
-        "things-spinner": "ThingsElements/things-spinner",
+        "things-setting": "WeiXunElements/things-setting",
+        "things-spinner": "WeiXunElements/things-spinner",
         "paper-toast": "^1.2.2"
     }
 }
